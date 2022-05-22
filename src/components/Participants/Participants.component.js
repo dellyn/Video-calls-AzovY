@@ -1,11 +1,29 @@
 import React, { useEffect, useRef } from "react";
-import "./Participants.css";
 import { connect } from "react-redux";
 import { Participant } from "./Participant/Participant.component";
+import classNames from "classnames";
+import "./Participants.scss";
 
 const Participants = (props) => {
+  const containerRef = useRef(null);
   const videoRef = useRef(null);
   let participantKey = Object.keys(props.participants);
+  const screenPresenter = participantKey.find((element) => {
+    const currentParticipant = props.participants[element];
+    return currentParticipant.screen;
+  });
+  const currentUser = props.currentUser
+    ? Object.values(props.currentUser)[0]
+    : {};
+
+  const containerClassName = classNames(
+    `participants members-${participantKey.length}`,
+    {
+      "has-screen-presenter": screenPresenter,
+      "is-current-user-presenter": screenPresenter && currentUser.screen,
+    }
+  );
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = props.stream;
@@ -13,29 +31,8 @@ const Participants = (props) => {
     }
   }, [props.currentUser, props.stream]);
 
-  const currentUser = props.currentUser
-    ? Object.values(props.currentUser)[0]
-    : null;
-
-  let gridCol =
-    participantKey.length === 1 ? 1 : participantKey.length <= 4 ? 2 : 4;
-  const gridColSize = participantKey.length <= 4 ? 1 : 2;
-  let gridRowSize =
-    participantKey.length <= 4
-      ? participantKey.length
-      : Math.ceil(participantKey.length / 2);
-
-  const screenPresenter = participantKey.find((element) => {
-    const currentParticipant = props.participants[element];
-    return currentParticipant.screen;
-  });
-
-  if (screenPresenter) {
-    gridCol = 1;
-    gridRowSize = 2;
-  }
-  const participants = participantKey.map((element, index) => {
-    const currentParticipant = props.participants[element];
+  const renderParticipants = participantKey.map((id, index) => {
+    const currentParticipant = props.participants[id];
     const isCurrentUser = currentParticipant.currentUser;
     if (isCurrentUser) {
       return null;
@@ -57,10 +54,12 @@ const Participants = (props) => {
 
     return (
       <Participant
+        containerRef={containerRef}
+        participantKey={participantKey}
         key={curentIndex}
+        isScreenPresenter={screenPresenter === id}
         currentParticipant={currentParticipant}
         curentIndex={curentIndex}
-        hideVideo={screenPresenter && screenPresenter !== element}
         showAvatar={
           !currentParticipant.video &&
           !currentParticipant.screen &&
@@ -69,20 +68,22 @@ const Participants = (props) => {
       />
     );
   });
+
   return (
     <div
       style={{
-        "--grid-size": gridCol,
-        "--grid-col-size": gridColSize,
-        "--grid-row-size": gridRowSize,
+        "--members-count": participantKey.length,
       }}
-      className={`participants`}
+      className={containerClassName}
+      ref={containerRef}
     >
-      {participants}
+      {renderParticipants}
       <Participant
+        containerRef={containerRef}
+        participantKey={participantKey}
         currentParticipant={currentUser}
         curentIndex={participantKey.length}
-        hideVideo={screenPresenter && !currentUser.screen}
+        isScreenPresenter={currentUser.screen}
         videoRef={videoRef}
         showAvatar={currentUser && !currentUser.video && !currentUser.screen}
         currentUser={true}
