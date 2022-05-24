@@ -88,8 +88,6 @@ export const Participant = (props) => {
     return Math.round((participantKey.length * minWidth) / width);
   }
 
-  const participantHeight = height;
-  console.log("getNumOfRows", getNumOfRows(), participantHeight);
   if (!currentParticipant) return <></>;
 
   return (

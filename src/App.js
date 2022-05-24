@@ -1,6 +1,7 @@
 import MainScreen from "./components/MainScreen/MainScreen.component";
 import roomRef, { db } from "./server/firebase";
 import "./App.css";
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import {
   setMainStream,
@@ -17,6 +18,9 @@ export function getRoomId() {
   return roomId;
 }
 
+export function generateId() {
+  return uuidv4();
+}
 const connectedRef = db.database().ref(".info/connected");
 const participantRef = roomRef.child("participants");
 
@@ -33,6 +37,7 @@ function App(props) {
 
     return localStream;
   };
+
   async function initialConnection(params) {
     const stream = await getUserStream();
     stream.getVideoTracks()[0].enabled = false;
@@ -45,14 +50,17 @@ function App(props) {
           video: false,
           screen: false,
         };
-        const userStatusRef = participantRef.push({
+        const userId = generateId();
+        const userRef = participantRef.child(userId);
+        userRef.set({
           userName,
+          id: userId,
           preferences: defaultPreference,
         });
         props.setUser({
-          [userStatusRef.key]: { name: userName, ...defaultPreference },
+          [userRef.key]: { name: userName, id: userId, ...defaultPreference },
         });
-        userStatusRef.onDisconnect().remove();
+        userRef.onDisconnect().remove();
       }
     });
   }

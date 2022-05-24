@@ -53,10 +53,10 @@
   position: absolute;
   left: 20px;
 }
-.is-current-user {
+.is-current-user .card {
   border: 2px solid green;
 }
-.is-screen-presenter {
+.is-screen-presenter .card {
   border: 2px solid red;
 }
 

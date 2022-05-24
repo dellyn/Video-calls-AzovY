@@ -6,9 +6,11 @@ import {
   faDesktop,
   faVideoSlash,
   faMicrophoneSlash,
+  faMessages,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import "./MeetingFooter.css";
+
 const MeetingFooter = (props) => {
   const [streamState, setStreamState] = useState({
     mic: true,
@@ -78,6 +80,11 @@ const MeetingFooter = (props) => {
       >
         <FontAwesomeIcon icon={faDesktop} />
       </div>
+      <div
+        className="meeting-icons"
+        onClick={props.openChat}
+        disabled={streamState.screen}
+      ></div>
       <ReactTooltip />
     </div>
   );

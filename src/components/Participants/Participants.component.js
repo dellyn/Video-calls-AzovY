@@ -21,6 +21,7 @@ const Participants = (props) => {
     {
       "has-screen-presenter": screenPresenter,
       "is-current-user-presenter": screenPresenter && currentUser.screen,
+      "is-chat-open": props.isChatOpen,
     }
   );
 

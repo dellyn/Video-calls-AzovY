@@ -1,12 +1,14 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import MeetingFooter from "../MeetingFooter/MeetingFooter.component";
 import Participants from "../Participants/Participants.component";
 import "./MainScreen.css";
 import { connect } from "react-redux";
 import { setMainStream, updateUser } from "../../store/actioncreator";
+import Chat from "../Chat/Chat";
 
 const MainScreen = (props) => {
   const participantRef = useRef(props.participants);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const onMicClick = (micEnabled) => {
     if (props.stream) {
@@ -72,10 +74,17 @@ const MainScreen = (props) => {
 
     props.updateUser({ screen: true });
   };
+
+  function openChat() {
+    setIsChatOpen(true);
+  }
+  function closeChat() {
+    setIsChatOpen(false);
+  }
   return (
     <div className="wrapper">
       <div className="main-screen">
-        <Participants />
+        <Participants isChatOpen={isChatOpen} />
       </div>
 
       <div className="footer">
@@ -83,8 +92,10 @@ const MainScreen = (props) => {
           onScreenClick={onScreenClick}
           onMicClick={onMicClick}
           onVideoClick={onVideoClick}
+          openChat={openChat}
         />
       </div>
+      <Chat open={isChatOpen} onClose={closeChat} />
     </div>
   );
 };
