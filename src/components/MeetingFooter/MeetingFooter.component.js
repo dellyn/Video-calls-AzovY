@@ -80,11 +80,12 @@ const MeetingFooter = (props) => {
       >
         <FontAwesomeIcon icon={faDesktop} />
       </div>
-      <div
-        className="meeting-icons"
-        onClick={props.openChat}
-        disabled={streamState.screen}
-      ></div>
+      <div className="meeting-icons" onClick={props.openChat}>
+        c
+      </div>
+      <div className="meeting-icons" onClick={props.openPools}>
+        p
+      </div>
       <ReactTooltip />
     </div>
   );

@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import MeetingFooter from "../MeetingFooter/MeetingFooter.component";
 import Participants from "../Participants/Participants.component";
-import "./MainScreen.css";
 import { connect } from "react-redux";
 import { setMainStream, updateUser } from "../../store/actioncreator";
 import Chat from "../Chat/Chat";
+import Pools from "../Pools/Pools";
+import "./MainScreen.scss";
 
 const MainScreen = (props) => {
   const participantRef = useRef(props.participants);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isPoolsOpen, setIsPoolsOpen] = useState(true);
 
   const onMicClick = (micEnabled) => {
     if (props.stream) {
@@ -76,7 +78,15 @@ const MainScreen = (props) => {
   };
 
   function openChat() {
-    setIsChatOpen(true);
+    setIsChatOpen(!isChatOpen);
+    setIsPoolsOpen(false);
+  }
+  function openPools() {
+    setIsPoolsOpen(!isPoolsOpen);
+    setIsChatOpen(false);
+  }
+  function closePools() {
+    setIsPoolsOpen(true);
   }
   function closeChat() {
     setIsChatOpen(false);
@@ -84,7 +94,7 @@ const MainScreen = (props) => {
   return (
     <div className="wrapper">
       <div className="main-screen">
-        <Participants isChatOpen={isChatOpen} />
+        <Participants isChatOpen={isChatOpen || isPoolsOpen} />
       </div>
 
       <div className="footer">
@@ -93,9 +103,11 @@ const MainScreen = (props) => {
           onMicClick={onMicClick}
           onVideoClick={onVideoClick}
           openChat={openChat}
+          openPools={openPools}
         />
       </div>
       <Chat open={isChatOpen} onClose={closeChat} />
+      <Pools open={isPoolsOpen} closePools={closePools} />
     </div>
   );
 };

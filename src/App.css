@@ -6,3 +6,11 @@
 * {
   box-sizing: border-box;
 }
+
+.MuiFormControl-root.field-container {
+  margin-bottom: 8px;
+}
+.field-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}

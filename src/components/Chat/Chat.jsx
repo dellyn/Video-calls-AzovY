@@ -68,34 +68,37 @@ const Chat = ({ user, open, onClose }) => {
   }, [chatRef]);
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      variant="persistent"
-      disablePortal
-      ModalProps={{ keepMounted: true }}
-      classes={{ paper: "chat-container" }}
-      PaperProps={{
-        "aria-label": "aria label",
-      }}
-    >
-      <div className="header">
-        <IconButton onClick={onClose}>close</IconButton>
-      </div>
-      <div className="messages">{messages.map(renderMessages)}</div>
-      <form onSubmit={sendMessage}>
-        <TextField
-          onChange={changeMessage}
-          value={message}
-          size="small"
-          variant="outlined"
-          type="text"
-          fullWidth
-        />
-        <Button type="submit">Send</Button>
-      </form>
-    </Drawer>
+    <div className="right-panel">
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        variant="persistent"
+        disablePortal
+        ModalProps={{ keepMounted: true }}
+        classes={{ paper: "chat-container" }}
+        PaperProps={{
+          "aria-label": "aria label",
+        }}
+      >
+        <div className="header">
+          <h3>Chat</h3>
+          <IconButton onClick={onClose}>close</IconButton>
+        </div>
+        <div className="messages">{messages.map(renderMessages)}</div>
+        <form onSubmit={sendMessage}>
+          <TextField
+            onChange={changeMessage}
+            value={message}
+            size="small"
+            variant="outlined"
+            type="text"
+            fullWidth
+          />
+          <Button type="submit">Send</Button>
+        </form>
+      </Drawer>
+    </div>
   );
 };
 const mapStateToProps = (state) => {

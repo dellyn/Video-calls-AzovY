@@ -5,7 +5,14 @@
   display: flex;
   align-items: center;
 }
-
+.right-panel {
+  .chat-container,
+  .pools-container {
+    width: 400px;
+    padding: 16px;
+    height: 100%;
+  }
+}
 .wrapper {
   width: 100%;
 }
