@@ -11,6 +11,13 @@
     width: 400px;
     padding: 16px;
     height: 100%;
+    .header {
+      display: flex;
+      align-items: center;
+      .close-btn {
+        margin-left: auto;
+      }
+    }
   }
 }
 .wrapper {

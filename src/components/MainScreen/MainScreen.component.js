@@ -86,7 +86,7 @@ const MainScreen = (props) => {
     setIsChatOpen(false);
   }
   function closePools() {
-    setIsPoolsOpen(true);
+    setIsPoolsOpen(false);
   }
   function closeChat() {
     setIsChatOpen(false);
@@ -107,7 +107,7 @@ const MainScreen = (props) => {
         />
       </div>
       <Chat open={isChatOpen} onClose={closeChat} />
-      <Pools open={isPoolsOpen} closePools={closePools} />
+      <Pools open={isPoolsOpen} onClose={closePools} />
     </div>
   );
 };

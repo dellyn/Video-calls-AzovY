@@ -1,0 +1,31 @@
+.App {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+* {
+  box-sizing: border-box;
+}
+
+.MuiFormControl-root.field-container {
+  margin-bottom: 8px;
+}
+.field-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.close-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+.MuiButtonBase-root.MuiButton-root.MuiButton-text {
+  background-color: #1687ba;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  &.Mui-disabled {
+    background-color: #dfdfdf;
+    color: #6e6e6e;
+  }
+}

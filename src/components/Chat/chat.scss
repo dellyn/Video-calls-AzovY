@@ -1,3 +1,5 @@
+@import "../../mixins/vars.scss";
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -9,15 +11,18 @@
     height: calc(100% - 80px);
     overflow: hidden;
     overflow-y: scroll;
+    background: $background-accented;
+    margin-bottom: 16px;
+    padding: 8px;
 
     .message-container {
       display: flex;
       align-items: center;
-      background-color: #e3efff;
+      background-color: #c2e9ff;
       padding: 8px;
       border-radius: 8px;
       width: 80%;
-      margin: 16px 0;
+      margin-bottom: 16px;
       min-height: 40px;
       .avatar {
         position: relative;
@@ -31,9 +36,9 @@
       background-color: #c2dcff;
       margin-left: auto;
       display: flex;
-
-      .avatar {
-      }
     }
+  }
+  .send-btn {
+    margin-left: 16px;
   }
 }

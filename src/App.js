@@ -1,6 +1,6 @@
 import MainScreen from "./components/MainScreen/MainScreen.component";
 import roomRef, { db } from "./server/firebase";
-import "./App.css";
+import "./App.scss";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import {

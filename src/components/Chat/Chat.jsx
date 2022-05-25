@@ -8,6 +8,7 @@ import { generateId } from "../../App";
 import "./chat.scss";
 import moment from "moment";
 import { IconButton } from "@material-ui/core";
+import CloseButton from "../Shared/CloseButton/CloseButton";
 
 const chatRef = roomRef.child("chat");
 const Chat = ({ user, open, onClose }) => {
@@ -83,7 +84,7 @@ const Chat = ({ user, open, onClose }) => {
       >
         <div className="header">
           <h3>Chat</h3>
-          <IconButton onClick={onClose}>close</IconButton>
+          <CloseButton onClick={onClose} />
         </div>
         <div className="messages">{messages.map(renderMessages)}</div>
         <form onSubmit={sendMessage}>
@@ -95,7 +96,9 @@ const Chat = ({ user, open, onClose }) => {
             type="text"
             fullWidth
           />
-          <Button type="submit">Send</Button>
+          <Button type="submit" className="send-btn">
+            Send
+          </Button>
         </form>
       </Drawer>
     </div>

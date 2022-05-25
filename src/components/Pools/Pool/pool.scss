@@ -1,0 +1,10 @@
+@import "../../../mixins/vars.scss";
+
+.pool-container {
+  .save-btn-container {
+    margin-top: 16px;
+  }
+  margin-bottom: 24px;
+  padding: 8px;
+  background: $background-accented;
+}

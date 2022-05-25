@@ -4,43 +4,22 @@ import TextField from "@material-ui/core/TextField";
 import Question from "./Question/Question";
 import isEmpty from "lodash.isempty";
 import { Button, FormControl } from "@material-ui/core";
-import { generateId } from "../../../App";
 import "./pool.scss";
+import isEqual from "lodash.isequal";
 
-const defaultQuestions = [
-  {
-    option: "Option 1",
-    id: 0,
-  },
-  {
-    option: "Option 2",
-    id: 1,
-  },
-  {
-    option: "Option 3",
-    id: 2,
-  },
-];
-const defaultPool = {
-  title: "",
-  description: "",
-  questions: defaultQuestions,
-  questionsType: "checkbox",
-};
-
-const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
-  const isCreateMode = !sourcePool;
+const Pool = ({
+  pool: sourcePool,
+  isCreateMode,
+  createPool,
+  updatePool,
+  userId,
+}) => {
   const [selectedIds, setSelectedIds] = useState([]);
-  const [pool, setPool] = useState(
-    sourcePool || {
-      ...defaultPool,
-      id: generateId(),
-    }
-  );
-  const [wasChanged, setWasChanged] = useState(false);
+  const [pool, setPool] = useState(sourcePool);
 
   function handleSave(e) {
     e.preventDefault();
+
     if (isCreateMode) {
       createPool(pool);
     } else {
@@ -48,7 +27,6 @@ const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
     }
   }
   function onChange({ target }) {
-    setWasChanged(true);
     setPool({
       ...pool,
       [target.name]: target.value,
@@ -56,7 +34,6 @@ const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
   }
 
   function onChangeQuestion({ name, value }) {
-    setWasChanged(true);
     setPool({
       ...pool,
       [name]: value,
@@ -75,13 +52,16 @@ const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
       }
     };
   }
+  useEffect(() => {
+    setPool(sourcePool);
+  }, [sourcePool]);
 
   return (
-    <div className="pool">
+    <div className="pool-container">
       <form onSubmit={handleSave}>
         <FormControl fullWidth required className="field-container">
           <label className="field-label" htmlFor="title">
-            Title
+            Pool Title
           </label>
           <TextField
             id="title"
@@ -97,7 +77,7 @@ const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
         </FormControl>
         <FormControl fullWidth required className="field-container">
           <label className="field-label" htmlFor="description">
-            Description
+            Pool Description
           </label>
           <TextField
             id="description"
@@ -137,7 +117,7 @@ const Pool = ({ pool: sourcePool, createPool, updatePool }) => {
           </div>
         </div>
         <div className="save-btn-container">
-          <Button disabled={!wasChanged} type={handleSave}>
+          <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
             {isCreateMode ? "Create" : "Save"}
           </Button>
         </div>
