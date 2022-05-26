@@ -1,21 +1,40 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 
-import Question from "./Question/Question";
+import Option from "./Option/Option";
 import isEmpty from "lodash.isempty";
-import { Button, FormControl } from "@material-ui/core";
+import { Button, FormControl, FormLabel, IconButton } from "@material-ui/core";
 import "./pool.scss";
 import isEqual from "lodash.isequal";
+import DeleteButton from "../../Shared/DeleteButton/DeleteButton";
+import classNames from "classnames";
+import { defaultOptions, defaultPool } from "../Pools";
 
 const Pool = ({
+  isManager,
   pool: sourcePool,
   isCreateMode,
   createPool,
   updatePool,
+  editPool,
+  deletePool,
   userId,
+  poolRef,
 }) => {
-  const [selectedIds, setSelectedIds] = useState([]);
   const [pool, setPool] = useState(sourcePool);
+  const options = isEmpty(pool.options) ? defaultOptions : pool.options;
+  const [isEditMode, setIsEditMode] = useState(false);
+  const isEditing = isEditMode || isCreateMode;
+  const isViewMode = !isEditMode && !isCreateMode;
+  const selectedOptionId = pool.votes.users[userId];
+  const isVoted = !!selectedOptionId;
+  const poolResults = pool.votes.options;
+  console.log(pool.votes.options);
+
+  const containerClassName = classNames("pool-container", {
+    "is-view": isViewMode,
+    voted: isVoted,
+  });
 
   function handleSave(e) {
     e.preventDefault();
@@ -40,87 +59,157 @@ const Pool = ({
     });
   }
 
-  function select(id) {
+  function vote(optionId) {
     return (event) => {
-      if (event.target.checked && !selectedIds?.includes(id)) {
-        setSelectedIds([...selectedIds, id]);
-      } else if (!event.target.checked) {
-        const updatedIds = selectedIds.filter(
-          (selectedId) => selectedId !== id
-        );
-        setSelectedIds(updatedIds);
+      // TODO prevent duplicates
+      if (event.target.checked && !isVoted) {
+        const optionUsers = pool.votes.options[optionId] || [];
+        const updatedOptions = {
+          ...pool.votes.options,
+          [optionId]: [...optionUsers, userId],
+        };
+
+        const updatedUsers = {
+          ...pool.votes.users,
+          [userId]: optionId,
+        };
+
+        updatePool({
+          ...pool,
+          votes: {
+            options: updatedOptions,
+            users: updatedUsers,
+          },
+        });
       }
     };
   }
+
+  function retractVote() {
+    const selectedOptionId = pool.votes.users[userId];
+    if (selectedOptionId) {
+      const optionUsers = pool.votes.options[selectedOptionId] || [];
+      const filteredUsers = optionUsers.filter((id) => id !== userId);
+      const updatedOptions = {
+        ...pool.votes.options,
+        [selectedOptionId]: filteredUsers,
+      };
+      const updatedUsers = { ...pool.votes.users };
+      delete updatedUsers[userId];
+
+      updatePool({
+        ...pool,
+        votes: {
+          options: {
+            ...updatedOptions,
+          },
+          users: updatedUsers,
+        },
+      });
+    }
+  }
+
+  function renderPoolActions() {
+    if (isViewMode && isVoted) {
+      return (
+        <div className="actions">
+          <IconButton onClick={retractVote} className="retract-btn">
+            retract
+          </IconButton>
+        </div>
+      );
+    }
+    if (isCreateMode) {
+      return (
+        <div className="actions">
+          <IconButton onClick={() => setIsEditMode(true)} className="close-btn">
+            e
+          </IconButton>
+          <DeleteButton onClick={() => deletePool(pool.id)} />
+        </div>
+      );
+    }
+  }
+
   useEffect(() => {
     setPool(sourcePool);
   }, [sourcePool]);
 
   return (
-    <div className="pool-container">
+    <div className={containerClassName}>
       <form onSubmit={handleSave}>
-        <FormControl fullWidth required className="field-container">
-          <label className="field-label" htmlFor="title">
-            Pool Title
-          </label>
-          <TextField
-            id="title"
-            onChange={onChange}
-            value={pool.title || "Untitled pool"}
-            name="title"
-            size="small"
-            variant="outlined"
-            type="text"
-            fullWidth
-            required
-          />
-        </FormControl>
-        <FormControl fullWidth required className="field-container">
-          <label className="field-label" htmlFor="description">
-            Pool Description
-          </label>
-          <TextField
-            id="description"
-            onChange={onChange}
-            value={pool.description}
-            placeholder="Pool description"
-            name="description"
-            size="small"
-            variant="outlined"
-            type="text"
-            fullWidth
-            multiline
-          />
-        </FormControl>
-        <div className="questions">
-          <label className="field-label">Options</label>
-          {!isEmpty(pool.questions) &&
-            pool.questions.map((question) => {
+        <header>
+          <FormControl fullWidth required className="field-container title">
+            <FormLabel className="field-label title" htmlFor="title">
+              Pool Title
+            </FormLabel>
+            <TextField
+              id="title"
+              onChange={onChange}
+              value={pool.title || "Question"}
+              name="title"
+              size="small"
+              variant="outlined"
+              type="text"
+              fullWidth
+              required
+              InputProps={{
+                readOnly: !isEditing,
+              }}
+            />
+          </FormControl>
+          {renderPoolActions()}
+        </header>
+        {(isEditing || pool.description) && (
+          <span className="field-label description" htmlFor="description">
+            Anonymous pool
+          </span>
+        )}
+
+        <div className="options">
+          <FormLabel className="field-label options">Options</FormLabel>
+          {!isEmpty(options) &&
+            options.map((option) => {
               return (
-                <Question
-                  question={question}
+                <Option
+                  key={option.id}
+                  option={option}
                   pool={pool}
-                  select={select}
-                  selectedIds={selectedIds}
+                  select={vote}
+                  checked={selectedOptionId === option.id}
                   isCreateMode={isCreateMode}
+                  isEditMode={isEditMode}
                   onChange={onChangeQuestion}
+                  isVoted={isVoted}
                 />
               );
             })}
-          <div className="add-option-container">
-            <Question
-              pool={pool}
-              isPlaceholder
-              isCreateMode={isCreateMode}
-              onChange={onChangeQuestion}
-            />
+          {isEditing && (
+            <div className="add-option-container">
+              <Option
+                pool={pool}
+                isPlaceholder
+                isCreateMode={isCreateMode}
+                isEditMode={isEditMode}
+                onChange={onChangeQuestion}
+              />
+            </div>
+          )}
+        </div>
+        {isCreateMode && (
+          <div className="create-btn-container">
+            <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
+              Create
+            </Button>
           </div>
-        </div>
-        <div className="save-btn-container">
-          <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
-            {isCreateMode ? "Create" : "Save"}
-          </Button>
-        </div>
+        )}
+        {isManager && isEditMode && (
+          <div className="save-btn-container">
+            <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
+              Save
+            </Button>
+          </div>
+        )}
       </form>
     </div>
   );

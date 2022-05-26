@@ -1,64 +1,64 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import { Checkbox, IconButton } from "@material-ui/core";
-import "./question.scss";
-const Question = ({
-  question = {},
+import "./option.scss";
+const Option = ({
+  option = {},
   pool,
   isCreateMode,
+  isEditMode,
   onChange,
+  checked,
   select = () => {},
-  selectedIds = [],
   isPlaceholder = false,
 }) => {
   function handleChange({ target }) {
-    const updatedQuestions = pool.questions.map((quest) => {
-      if (quest.id === question.id) {
+    const updatedQuestions = pool.options.map((opt) => {
+      if (opt.id === option.id) {
         return {
-          ...quest,
+          ...opt,
           [target.name]: target.value,
         };
       }
-      return quest;
+      return opt;
     });
 
-    onChange({ name: "questions", value: updatedQuestions });
+    onChange({ name: "options", value: updatedQuestions });
   }
   function handleDelete() {
-    const updatedQuestions = pool.questions.filter(
-      (quest) => quest.id !== question.id
-    );
+    const updatedQuestions = pool.options.filter(({ id }) => id !== option.id);
 
-    onChange({ name: "questions", value: updatedQuestions });
+    onChange({ name: "options", value: updatedQuestions });
   }
   function addQuestion() {
     const updatedQuestions = [
-      ...pool.questions,
+      ...pool.options,
       {
-        option: `Option ${pool.questions.length + 1}`,
-        id: pool.questions.length,
+        value: `Option ${pool.options.length + 1}`,
+        id: pool.options.length,
       },
     ];
-    onChange({ name: "questions", value: updatedQuestions });
+    onChange({ name: "options", value: updatedQuestions });
   }
-  function renderQuestionType(question = {}) {
+  function renderQuestionType() {
     return (
       <Checkbox
-        checked={selectedIds.includes(question.id)}
-        onChange={select(question.id)}
+        checked={checked}
+        onChange={select(option.id)}
         color="primary"
         size="small"
         disableRipple
         disabled={isCreateMode}
+        readOnly={!isEditMode || !isCreateMode}
       />
     );
   }
 
   return (
-    <div className="question-container">
+    <div className="option-container">
       {renderQuestionType()}
       <div className="field-container option">
-        {isPlaceholder ? (
+        {isPlaceholder && (
           <TextField
             placeholder="Add option"
             name="option"
@@ -68,16 +68,23 @@ const Question = ({
             fullWidth
             disabled
             onClick={addQuestion}
+            InputProps={{
+              readOnly: !isEditMode || !isCreateMode,
+            }}
           />
-        ) : (
+        )}
+        {!isPlaceholder && (
           <TextField
             onChange={handleChange}
-            value={question.option}
+            value={option.value}
             name="option"
             size="small"
             variant="outlined"
             type="text"
             fullWidth
+            InputProps={{
+              readOnly: !isEditMode || !isCreateMode,
+            }}
           />
         )}
       </div>
@@ -95,4 +102,4 @@ const Question = ({
   );
 };
 
-export default Question;
+export default Option;

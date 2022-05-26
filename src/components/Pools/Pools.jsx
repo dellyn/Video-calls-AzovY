@@ -12,25 +12,32 @@ import CloseButton from "../Shared/CloseButton/CloseButton";
 import "./pools.scss";
 
 const poolsRef = roomRef.child("pools");
-const defaultQuestions = [
+
+export const defaultOptions = [
   {
-    option: "Option 1",
-    id: 0,
+    value: "Option 1",
+    id: "123123",
   },
   {
-    option: "Option 2",
-    id: 1,
+    value: "Option 2",
+    id: "123123123",
   },
   {
-    option: "Option 3",
-    id: 2,
+    value: "Option 3",
+    id: "1231231232",
   },
 ];
+
 export const defaultPool = {
   title: "",
   description: "",
-  questions: defaultQuestions,
-  questionsType: "checkbox",
+  options: [],
+  questionsType: "",
+  votes: {
+    options: {},
+    users: {},
+  },
+  type: "",
   id: null,
 };
 
@@ -39,7 +46,7 @@ const Pools = ({ user, open, onClose }) => {
   const [placeholderPool, setPlaceholderPool] = useState({});
   const userId = Object.keys(user)[0];
   const isManager = true;
-  const poolsLimit = 1;
+  const poolsLimit = 2;
 
   function createPool(pool) {
     const poolId = generateId();
@@ -54,10 +61,15 @@ const Pools = ({ user, open, onClose }) => {
 
   function updatePool(updatedPool) {
     poolsRef.child(updatedPool.id).set(updatedPool);
+    setPlaceholderPool({});
   }
 
   function addNewPool() {
     setPlaceholderPool(defaultPool);
+  }
+  function editPool(id) {}
+  function deletePool(id) {
+    poolsRef.child(id).set(null);
   }
 
   function subscribeOnpools() {
@@ -75,6 +87,25 @@ const Pools = ({ user, open, onClose }) => {
     }
   }, [poolsRef]);
 
+  function mapPool(pool) {
+    const defaultVotesOptions = defaultOptions.map(({ id }) => {
+      return {
+        [id]: [],
+      };
+    });
+    return {
+      ...defaultPool,
+      ...pool,
+      votes: {
+        ...defaultPool.votes,
+        ...pool.votes,
+        options: {
+          ...defaultVotesOptions,
+          ...pool.votes?.options,
+        },
+      },
+    };
+  }
   function renderPools() {
     return (
       <div className="">
@@ -82,10 +113,13 @@ const Pools = ({ user, open, onClose }) => {
           return (
             <Pool
               key={idx}
-              pool={pool}
+              pool={mapPool(pool)}
               createPool={createPool}
               updatePool={updatePool}
+              editPool={editPool}
+              deletePool={deletePool}
               userId={userId}
+              isManager={isManager}
             />
           );
         })}
@@ -130,6 +164,7 @@ const Pools = ({ user, open, onClose }) => {
               isCreateMode
               createPool={createPool}
               userId={userId}
+              isManager={isManager}
             />
           )}
           {!isEmpty(pools) && renderPools()}

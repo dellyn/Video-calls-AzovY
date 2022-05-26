@@ -1,10 +1,59 @@
 @import "../../../mixins/vars.scss";
 
 .pool-container {
-  .save-btn-container {
-    margin-top: 16px;
-  }
   margin-bottom: 24px;
   padding: 8px;
   background: $background-accented;
+
+  header {
+    display: flex;
+    align-items: center;
+
+    .actions {
+      display: flex;
+    }
+  }
+
+  .save-btn-container,
+  .create-btn-container {
+    margin-top: 16px;
+  }
+
+  .field-container {
+    &.title {
+      input {
+        font-size: 16px;
+      }
+    }
+
+    &.description {
+      textarea {
+        font-size: 12px;
+      }
+    }
+  }
+
+  &.is-view {
+    .field-label {
+      &.title,
+      &.description,
+      &.options {
+        display: none;
+      }
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border: none;
+      border-bottom: 1px solid #c4c4c4;
+    }
+    .option-container {
+      .delete-icon-container {
+        display: none;
+      }
+    }
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #c4c4c4;
+      border: none;
+    }
+  }
 }
