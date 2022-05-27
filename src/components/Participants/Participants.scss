@@ -1,5 +1,5 @@
 $participant-height-while-sharing: 180px;
-$max-width: 1750px;
+$max-width: 100%;
 
 .participants {
   display: flex;
@@ -16,7 +16,6 @@ $max-width: 1750px;
     flex-grow: 1;
     margin: 8px;
     max-height: 30vw;
-    max-width: 800px;
     &.is-current-user {
       padding: 24px 0;
     }

@@ -40,7 +40,7 @@ export const initializeListensers = async (userId) => {
     const data = snapshot.val();
     if (data?.offer) {
       const pc =
-        store.getState().participants[data.offer.userId].peerConnection;
+        store.getState().participants[data.offer.userId]?.peerConnection;
       await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
       await createAnswer(data.offer.userId, userId);
     }

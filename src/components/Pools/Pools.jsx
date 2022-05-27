@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import roomRef, { getTimestamp } from "../../server/firebase";
-import TextField from "@material-ui/core/TextField";
+import roomRef from "../../server/firebase";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
 import { connect } from "react-redux";
 import { generateId } from "../../App";
-import { IconButton } from "@material-ui/core";
 import isEmpty from "lodash.isempty";
 import Pool from "./Pool/Pool";
 import CloseButton from "../Shared/CloseButton/CloseButton";
@@ -13,25 +11,25 @@ import "./pools.scss";
 
 const poolsRef = roomRef.child("pools");
 
-export const defaultOptions = [
-  {
+export const defaultOptions = {
+  0: {
     value: "Option 1",
-    id: "123123",
+    id: 0,
   },
-  {
+  1: {
     value: "Option 2",
-    id: "123123123",
+    id: 1,
   },
-  {
+  2: {
     value: "Option 3",
-    id: "1231231232",
+    id: 2,
   },
-];
+};
 
 export const defaultPool = {
   title: "",
   description: "",
-  options: [],
+  options: defaultOptions,
   questionsType: "",
   votes: {
     options: {},
@@ -40,6 +38,41 @@ export const defaultPool = {
   type: "",
   id: null,
 };
+
+function arrayToObject(arr) {
+  const res = {};
+  for (let i = 0; i < arr.length; i++) {
+    const key = arr[i].id;
+    res[key] = arr[i];
+  }
+  return res;
+}
+
+function getOptions({ options, votes }) {
+  const allVotesCount = Object.values(votes.options).length;
+  const arrayOfOptionsWithResults = Object.keys(options).map((optionId) => {
+    return {
+      ...options[optionId],
+      result:
+        Math.floor((votes.options[optionId]?.length / allVotesCount) * 100) ||
+        0,
+    };
+  });
+
+  return arrayToObject(arrayOfOptionsWithResults);
+}
+
+function mapPool(sourcePool) {
+  const pool = {
+    ...defaultPool,
+    ...sourcePool,
+  };
+
+  return {
+    ...pool,
+    options: getOptions(pool),
+  };
+}
 
 const Pools = ({ user, open, onClose }) => {
   const [pools, setPools] = useState([]);
@@ -67,7 +100,6 @@ const Pools = ({ user, open, onClose }) => {
   function addNewPool() {
     setPlaceholderPool(defaultPool);
   }
-  function editPool(id) {}
   function deletePool(id) {
     poolsRef.child(id).set(null);
   }
@@ -87,28 +119,9 @@ const Pools = ({ user, open, onClose }) => {
     }
   }, [poolsRef]);
 
-  function mapPool(pool) {
-    const defaultVotesOptions = defaultOptions.map(({ id }) => {
-      return {
-        [id]: [],
-      };
-    });
-    return {
-      ...defaultPool,
-      ...pool,
-      votes: {
-        ...defaultPool.votes,
-        ...pool.votes,
-        options: {
-          ...defaultVotesOptions,
-          ...pool.votes?.options,
-        },
-      },
-    };
-  }
   function renderPools() {
     return (
-      <div className="">
+      <div className="pools-container">
         {pools.map((pool, idx) => {
           return (
             <Pool
@@ -116,7 +129,6 @@ const Pools = ({ user, open, onClose }) => {
               pool={mapPool(pool)}
               createPool={createPool}
               updatePool={updatePool}
-              editPool={editPool}
               deletePool={deletePool}
               userId={userId}
               isManager={isManager}

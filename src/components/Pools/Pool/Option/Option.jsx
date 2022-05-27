@@ -2,18 +2,20 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import { Checkbox, IconButton } from "@material-ui/core";
 import "./option.scss";
+import { generateId } from "../../../../App";
 const Option = ({
   option = {},
-  pool,
+  options,
   isCreateMode,
   isEditMode,
   onChange,
   checked,
   select = () => {},
   isPlaceholder = false,
+  isVoted,
 }) => {
   function handleChange({ target }) {
-    const updatedQuestions = pool.options.map((opt) => {
+    const updatedQuestions = options.map((opt) => {
       if (opt.id === option.id) {
         return {
           ...opt,
@@ -26,19 +28,20 @@ const Option = ({
     onChange({ name: "options", value: updatedQuestions });
   }
   function handleDelete() {
-    const updatedQuestions = pool.options.filter(({ id }) => id !== option.id);
+    const updatedQuestions = options.filter(({ id }) => id !== option.id);
 
     onChange({ name: "options", value: updatedQuestions });
   }
   function addQuestion() {
-    const updatedQuestions = [
-      ...pool.options,
-      {
-        value: `Option ${pool.options.length + 1}`,
-        id: pool.options.length,
+    const id = generateId();
+    const updatedOptions = {
+      ...options,
+      [id]: {
+        value: `Option ${options.length + 1}`,
+        id,
       },
-    ];
-    onChange({ name: "options", value: updatedQuestions });
+    };
+    onChange({ name: "options", value: updatedOptions });
   }
   function renderQuestionType() {
     return (
@@ -61,29 +64,26 @@ const Option = ({
         {isPlaceholder && (
           <TextField
             placeholder="Add option"
-            name="option"
+            name="value"
             size="small"
             variant="outlined"
             type="text"
             fullWidth
             disabled
             onClick={addQuestion}
-            InputProps={{
-              readOnly: !isEditMode || !isCreateMode,
-            }}
           />
         )}
         {!isPlaceholder && (
           <TextField
             onChange={handleChange}
             value={option.value}
-            name="option"
+            name="value"
             size="small"
             variant="outlined"
             type="text"
             fullWidth
             InputProps={{
-              readOnly: !isEditMode || !isCreateMode,
+              readOnly: !isEditMode && !isCreateMode,
             }}
           />
         )}
@@ -98,6 +98,7 @@ const Option = ({
           x
         </IconButton>
       )}
+      {isVoted && <div className="result">{`${option.result}%`}</div>}
     </div>
   );
 };

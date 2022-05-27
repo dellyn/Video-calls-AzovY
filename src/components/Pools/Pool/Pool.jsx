@@ -8,7 +8,6 @@ import "./pool.scss";
 import isEqual from "lodash.isequal";
 import DeleteButton from "../../Shared/DeleteButton/DeleteButton";
 import classNames from "classnames";
-import { defaultOptions, defaultPool } from "../Pools";
 
 const Pool = ({
   isManager,
@@ -16,21 +15,17 @@ const Pool = ({
   isCreateMode,
   createPool,
   updatePool,
-  editPool,
   deletePool,
   userId,
-  poolRef,
 }) => {
   const [pool, setPool] = useState(sourcePool);
-  const options = isEmpty(pool.options) ? defaultOptions : pool.options;
+  console.log(pool);
   const [isEditMode, setIsEditMode] = useState(false);
   const isEditing = isEditMode || isCreateMode;
   const isViewMode = !isEditMode && !isCreateMode;
-  const selectedOptionId = pool.votes.users[userId];
+  const selectedOptionId = pool.votes.users[userId]?.optionId;
   const isVoted = !!selectedOptionId;
-  const poolResults = pool.votes.options;
-  console.log(pool.votes.options);
-
+  const options = Object.values(pool.options);
   const containerClassName = classNames("pool-container", {
     "is-view": isViewMode,
     voted: isVoted,
@@ -71,22 +66,24 @@ const Pool = ({
 
         const updatedUsers = {
           ...pool.votes.users,
-          [userId]: optionId,
+          [userId]: {
+            optionId,
+          },
         };
 
-        updatePool({
+        const updatedPool = {
           ...pool,
           votes: {
             options: updatedOptions,
             users: updatedUsers,
           },
-        });
+        };
+        updatePool(updatedPool);
       }
     };
   }
 
   function retractVote() {
-    const selectedOptionId = pool.votes.users[userId];
     if (selectedOptionId) {
       const optionUsers = pool.votes.options[selectedOptionId] || [];
       const filteredUsers = optionUsers.filter((id) => id !== userId);
@@ -96,16 +93,14 @@ const Pool = ({
       };
       const updatedUsers = { ...pool.votes.users };
       delete updatedUsers[userId];
-
-      updatePool({
+      const updatedPool = {
         ...pool,
         votes: {
-          options: {
-            ...updatedOptions,
-          },
+          options: updatedOptions,
           users: updatedUsers,
         },
-      });
+      };
+      updatePool(updatedPool);
     }
   }
 
@@ -175,6 +170,7 @@ const Pool = ({
                   key={option.id}
                   option={option}
                   pool={pool}
+                  options={options}
                   select={vote}
                   checked={selectedOptionId === option.id}
                   isCreateMode={isCreateMode}
@@ -188,6 +184,7 @@ const Pool = ({
             <div className="add-option-container">
               <Option
                 pool={pool}
+                options={options}
                 isPlaceholder
                 isCreateMode={isCreateMode}
                 isEditMode={isEditMode}
