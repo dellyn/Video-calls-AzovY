@@ -6,6 +6,7 @@ import { setMainStream, updateUser } from "../../store/actioncreator";
 import Chat from "../Chat/Chat";
 import Pools from "../Pools/Pools";
 import "./MainScreen.scss";
+import useNotification from "../../hooks/useNotification";
 
 const MainScreen = (props) => {
   const participantRef = useRef(props.participants);
@@ -91,6 +92,10 @@ const MainScreen = (props) => {
   function closeChat() {
     setIsChatOpen(false);
   }
+  const { hasChatNotification, hasPoolsNotification } = useNotification({
+    isChatOpen,
+    isPoolsOpen,
+  });
   return (
     <div className="wrapper">
       <div className="main-screen">
@@ -104,6 +109,8 @@ const MainScreen = (props) => {
           onVideoClick={onVideoClick}
           openChat={openChat}
           openPools={openPools}
+          hasChatNotification={hasChatNotification}
+          hasPoolsNotification={hasPoolsNotification}
         />
       </div>
       <Chat open={isChatOpen} onClose={closeChat} />

@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import { generateId } from "../../App";
 import "./chat.scss";
 import moment from "moment";
-import { IconButton } from "@material-ui/core";
 import CloseButton from "../Shared/CloseButton/CloseButton";
 
 const chatRef = roomRef.child("chat");

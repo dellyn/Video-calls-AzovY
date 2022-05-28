@@ -19,7 +19,6 @@ const Pool = ({
   userId,
 }) => {
   const [pool, setPool] = useState(sourcePool);
-  console.log(pool);
   const [isEditMode, setIsEditMode] = useState(false);
   const isEditing = isEditMode || isCreateMode;
   const isViewMode = !isEditMode && !isCreateMode;

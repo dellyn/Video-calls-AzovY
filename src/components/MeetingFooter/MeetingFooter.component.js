@@ -6,7 +6,6 @@ import {
   faDesktop,
   faVideoSlash,
   faMicrophoneSlash,
-  faMessages,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import "./MeetingFooter.css";
@@ -80,12 +79,24 @@ const MeetingFooter = (props) => {
       >
         <FontAwesomeIcon icon={faDesktop} />
       </div>
-      <div className="meeting-icons" onClick={props.openChat}>
-        c
+
+      <div className="notification-icon-container">
+        <div className="meeting-icons" onClick={props.openChat}>
+          {props.hasChatNotification && (
+            <div className="notification-status">∆˚</div>
+          )}
+          c
+        </div>
       </div>
-      <div className="meeting-icons" onClick={props.openPools}>
-        p
+      <div className="notification-icon-container">
+        <div className="meeting-icons" onClick={props.openPools}>
+          {props.hasPoolsNotification && (
+            <div className="notification-status">∆˚</div>
+          )}
+          p
+        </div>
       </div>
+
       <ReactTooltip />
     </div>
   );

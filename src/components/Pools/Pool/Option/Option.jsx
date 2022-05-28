@@ -32,13 +32,14 @@ const Option = ({
 
     onChange({ name: "options", value: updatedQuestions });
   }
-  function addQuestion() {
+  function addOption() {
     const id = generateId();
     const updatedOptions = {
       ...options,
       [id]: {
         value: `Option ${options.length + 1}`,
         id,
+        index: options.length + 1,
       },
     };
     onChange({ name: "options", value: updatedOptions });
@@ -70,7 +71,7 @@ const Option = ({
             type="text"
             fullWidth
             disabled
-            onClick={addQuestion}
+            onClick={addOption}
           />
         )}
         {!isPlaceholder && (

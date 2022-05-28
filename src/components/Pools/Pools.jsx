@@ -7,72 +7,9 @@ import { generateId } from "../../App";
 import isEmpty from "lodash.isempty";
 import Pool from "./Pool/Pool";
 import CloseButton from "../Shared/CloseButton/CloseButton";
+import { defaultPool, mapPool } from "./utils";
 import "./pools.scss";
-
 const poolsRef = roomRef.child("pools");
-
-export const defaultOptions = {
-  0: {
-    value: "Option 1",
-    id: 0,
-  },
-  1: {
-    value: "Option 2",
-    id: 1,
-  },
-  2: {
-    value: "Option 3",
-    id: 2,
-  },
-};
-
-export const defaultPool = {
-  title: "",
-  description: "",
-  options: defaultOptions,
-  questionsType: "",
-  votes: {
-    options: {},
-    users: {},
-  },
-  type: "",
-  id: null,
-};
-
-function arrayToObject(arr) {
-  const res = {};
-  for (let i = 0; i < arr.length; i++) {
-    const key = arr[i].id;
-    res[key] = arr[i];
-  }
-  return res;
-}
-
-function getOptions({ options, votes }) {
-  const allVotesCount = Object.values(votes.options).length;
-  const arrayOfOptionsWithResults = Object.keys(options).map((optionId) => {
-    return {
-      ...options[optionId],
-      result:
-        Math.floor((votes.options[optionId]?.length / allVotesCount) * 100) ||
-        0,
-    };
-  });
-
-  return arrayToObject(arrayOfOptionsWithResults);
-}
-
-function mapPool(sourcePool) {
-  const pool = {
-    ...defaultPool,
-    ...sourcePool,
-  };
-
-  return {
-    ...pool,
-    options: getOptions(pool),
-  };
-}
 
 const Pools = ({ user, open, onClose }) => {
   const [pools, setPools] = useState([]);
