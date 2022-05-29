@@ -1,10 +1,11 @@
 import { IconButton } from "@material-ui/core";
 import React from "react";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-const DeleteButton = ({ onClick }) => {
+const DeleteButton = ({ onClick, className = "delete-btn" }) => {
   return (
-    <IconButton onClick={onClick} className="close-btn">
-      x
+    <IconButton onClick={onClick} className={className}>
+      <DeleteIcon aria-hidden />
     </IconButton>
   );
 };

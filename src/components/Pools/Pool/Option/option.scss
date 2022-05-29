@@ -1,14 +1,53 @@
+@import "../../../../mixins/vars.scss";
+
 .option-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all 0.2s ease-in-out;
   margin: 8px 0;
-  .field-container.option {
-    width: 100%;
-    margin: 0 8px;
+  color: $text-color;
+
+  .wrapper {
+    margin-left: 8px;
   }
-  .delete-icon-container {
-    width: 30px;
-    height: 30px;
+
+  .option-heading {
+    .result-number {
+      min-width: 37px;
+      font-size: 14px;
+      text-align: right;
+    }
+  }
+
+  .option-field {
+    display: flex;
+
+    .field-container.option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .delete-icon-container {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  .result-container {
+    visibility: hidden;
+
+    &.voted {
+      visibility: visible;
+    }
+    width: 100%;
+
+    .bar {
+      height: 6px;
+      border-radius: 8px;
+      background-color: $text-color;
+      min-width: 4px;
+      transition: all 0.2s ease-in-out;
+    }
   }
 }

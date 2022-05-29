@@ -66,6 +66,7 @@ const Participants = (props) => {
           !currentParticipant.screen &&
           currentParticipant.name
         }
+        isCurrentTabOpen={props.isCurrentTabOpen}
       />
     );
   });
@@ -88,6 +89,7 @@ const Participants = (props) => {
         videoRef={videoRef}
         showAvatar={currentUser && !currentUser.video && !currentUser.screen}
         currentUser={true}
+        isCurrentTabOpen={props.isCurrentTabOpen}
       />
     </div>
   );

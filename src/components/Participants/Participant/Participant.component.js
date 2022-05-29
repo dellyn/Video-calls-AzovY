@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Card from "../../Shared/Card/Card.component";
-import { faMicrophoneSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./Participant.css";
+import "./Participant.scss";
 import classNames from "classnames";
+import { stringToColour } from "../../../App";
+import MicOffIcon from "@material-ui/icons/MicOff";
+import MicIcon from "@material-ui/icons/Mic";
 
 function getGridStyle(participantKey, width) {
   let maxWidth = 800;
@@ -72,64 +73,48 @@ export const Participant = (props) => {
     videoRef,
     showAvatar,
     currentUser,
+    isCurrentTabOpen,
   } = props;
 
   const containerClassName = classNames("participant", {
     "is-screen-presenter": isScreenPresenter,
     "is-current-user": currentUser,
+    "is-current-tab-open": isCurrentTabOpen,
   });
-
-  const minWidth = 330;
-  const { width, height } = containerRef.current?.getBoundingClientRect() || {};
-  const { participantsInRow, widthPadding, participantsRows, heightPadding } =
-    getGridStyle(participantKey, width);
-
-  function getNumOfRows() {
-    return Math.round((participantKey.length * minWidth) / width);
-  }
 
   if (!currentParticipant) return <></>;
 
   return (
-    <div
-      className={containerClassName}
-      // style={{
-      //   width: `calc(100% / ${participantsInRow} - ${widthPadding}px)`,
-      //   "max-width": `calc(100% / ${participantsInRow} - ${widthPadding}px)`,
-      //   // "max-width": maxWidth,
-      //   "min-width": `${minWidth}px`,
-      //   height: `cauto`,
-      //   "max-height": `calc(100% / ${participantsRows} - ${heightPadding}px)`,
-      // }}
-    >
+    <div className={containerClassName}>
       <Card>
         <video
           ref={videoRef}
-          className="video"
+          className={`video ${
+            isScreenPresenter ? "screen-presenter-video" : ""
+          }`}
           id={`participantVideo${curentIndex}`}
           autoPlay
           playsInline
         ></video>
-        {!currentParticipant.audio && (
-          <FontAwesomeIcon
-            className="muted"
-            icon={faMicrophoneSlash}
-            title="Muted"
-          />
-        )}
+
         {showAvatar && (
           <div
-            style={{ background: currentParticipant.avatarColor }}
+            style={{ background: stringToColour(currentParticipant.id) }}
             className="avatar"
           >
             {currentParticipant?.name ? currentParticipant.name[0] : ""}
           </div>
         )}
-        <div className="name">
-          {currentParticipant.name}
-          {currentUser ? "(You)" : ""}
+        <div className="user-info-container">
+          {!currentParticipant.audio && (
+            <MicOffIcon className="muted-icon" aria-hidden />
+          )}
+          <div className="name">
+            {currentUser ? "You" : currentParticipant.name}
+          </div>
         </div>
       </Card>
+      <div className="layout"></div>
     </div>
   );
 };

@@ -12,6 +12,20 @@ import {
 } from "./store/actioncreator";
 import { connect } from "react-redux";
 
+export const stringToColour = function (str) {
+  if (str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    var colour = "#";
+    for (var i = 0; i < 3; i++) {
+      var value = (hash >> (i * 8)) & 0xff;
+      colour += ("00" + value.toString(16)).substr(-2);
+    }
+    return colour;
+  }
+};
 export function getRoomId() {
   const urlparams = new URLSearchParams(window.location.search);
   const roomId = urlparams.get("id");
@@ -46,7 +60,7 @@ function App(props) {
     connectedRef.on("value", (snap) => {
       if (snap.val()) {
         const defaultPreference = {
-          audio: true,
+          audio: false,
           video: false,
           screen: false,
         };
@@ -74,6 +88,13 @@ function App(props) {
     }
   }, [userName]);
 
+  document.addEventListener("visibilitychange", function (event) {
+    if (document.hidden) {
+      console.log("not visible");
+    } else {
+      console.log("is visible");
+    }
+  });
   useEffect(() => {
     if (isStreamSet && isUserSet) {
       participantRef.on("child_added", (snap) => {

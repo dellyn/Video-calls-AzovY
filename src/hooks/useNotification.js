@@ -25,7 +25,7 @@ const useNotification = (props = {}) => {
 
   function subcscribeOnPools() {
     setWasSubscribedOnPools(true);
-    poolsRef.on("value", (snap) => {
+    poolsRef.on("child_added", (snap) => {
       const data = snap.val();
       if (data && !isPoolsOpen) {
         setHasPoolsNotification(true);

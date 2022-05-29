@@ -3,6 +3,7 @@ import TextField from "@material-ui/core/TextField";
 import { Checkbox, IconButton } from "@material-ui/core";
 import "./option.scss";
 import { generateId } from "../../../../App";
+import DeleteButton from "../../../Shared/DeleteButton/DeleteButton";
 const Option = ({
   option = {},
   options,
@@ -44,7 +45,10 @@ const Option = ({
     };
     onChange({ name: "options", value: updatedOptions });
   }
-  function renderQuestionType() {
+  function renderOptionHeading() {
+    if (isVoted) {
+      return <div className="result-number">{`${option.result}%`}</div>;
+    }
     return (
       <Checkbox
         checked={checked}
@@ -60,46 +64,50 @@ const Option = ({
 
   return (
     <div className="option-container">
-      {renderQuestionType()}
-      <div className="field-container option">
-        {isPlaceholder && (
-          <TextField
-            placeholder="Add option"
-            name="value"
-            size="small"
-            variant="outlined"
-            type="text"
-            fullWidth
-            disabled
-            onClick={addOption}
-          />
-        )}
-        {!isPlaceholder && (
-          <TextField
-            onChange={handleChange}
-            value={option.value}
-            name="value"
-            size="small"
-            variant="outlined"
-            type="text"
-            fullWidth
-            InputProps={{
-              readOnly: !isEditMode && !isCreateMode,
-            }}
-          />
-        )}
+      <div className="option-heading">{renderOptionHeading()}</div>
+      <div className="wrapper">
+        <div className="option-field">
+          <div className="field-container option">
+            {isPlaceholder && (
+              <TextField
+                placeholder="Add option"
+                name="value"
+                size="small"
+                variant="outlined"
+                type="text"
+                fullWidth
+                disabled
+                onClick={addOption}
+              />
+            )}
+            {!isPlaceholder && (
+              <TextField
+                onChange={handleChange}
+                value={option.value}
+                name="value"
+                size="small"
+                variant="outlined"
+                type="text"
+                fullWidth
+                InputProps={{
+                  readOnly: !isEditMode && !isCreateMode,
+                }}
+              />
+            )}
+          </div>
+          {!isPlaceholder && (
+            <DeleteButton
+              onClick={handleDelete}
+              className="delete-icon-container"
+            />
+          )}
+        </div>
+        <div className={`result-container ${isVoted ? "voted" : ""}`}>
+          <div className="bar-container">
+            <div className="bar" style={{ width: `${option.result}%` }}></div>
+          </div>
+        </div>
       </div>
-      {!isPlaceholder && (
-        <IconButton
-          size="small"
-          edge="end"
-          classes={{ root: "delete-icon-container" }}
-          onClick={handleDelete}
-        >
-          x
-        </IconButton>
-      )}
-      {isVoted && <div className="result">{`${option.result}%`}</div>}
     </div>
   );
 };

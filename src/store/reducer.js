@@ -57,7 +57,6 @@ export const userReducer = (state = defaultUserState, action) => {
 
     if (currentUserId === newUserId)
       payload.newUser[newUserId].currentUser = true;
-    payload.newUser[newUserId].avatarColor = generateColor();
     let participants = { ...state.participants, ...payload.newUser };
     state = { ...state, participants };
     return state;
@@ -65,7 +64,6 @@ export const userReducer = (state = defaultUserState, action) => {
     let payload = action.payload;
     let participants = { ...state.participants };
     const userId = Object.keys(payload.currentUser)[0];
-    payload.currentUser[userId].avatarColor = generateColor();
     initializeListensers(userId);
     state = { ...state, currentUser: { ...payload.currentUser }, participants };
     return state;

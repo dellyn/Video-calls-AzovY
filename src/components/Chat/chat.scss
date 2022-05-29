@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: $main-color;
+
   form {
     display: flex;
   }
@@ -12,13 +14,15 @@
     overflow: hidden;
     overflow-y: scroll;
     background: $background-accented;
+    color: $text-color;
     margin-bottom: 16px;
     padding: 8px;
+    border-radius: 8px;
 
     .message-container {
       display: flex;
       align-items: center;
-      background-color: #c2e9ff;
+      background-color: #3e4950;
       padding: 8px;
       border-radius: 8px;
       width: 80%;
@@ -33,7 +37,7 @@
       }
     }
     .message-container.me {
-      background-color: #c2dcff;
+      background-color: #768a96;
       margin-left: auto;
       display: flex;
     }

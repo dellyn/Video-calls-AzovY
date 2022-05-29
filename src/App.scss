@@ -1,10 +1,20 @@
+@import "./mixins/vars.scss";
 .App {
   display: flex;
   width: 100vw;
   height: 100vh;
+  color: $text-color;
 
   * {
     box-sizing: border-box;
+  }
+  h1,
+  h2,
+  h3,
+  .title {
+    font-weight: 800;
+    font-size: 20px;
+    color: $text-color;
   }
 
   .MuiFormControl-root.field-container {
@@ -20,13 +30,28 @@
     font-size: 12px;
   }
   .MuiButtonBase-root.MuiButton-root.MuiButton-text {
-    background-color: #1687ba;
-    color: #fff;
+    background-color: $button-background-color;
+    color: $text-color;
     font-weight: 600;
     font-size: 14px;
     &.Mui-disabled {
-      background-color: #dfdfdf;
-      color: #6e6e6e;
+      background-color: $disabled-background-color;
+      color: $disabled-color;
     }
+  }
+  .MuiSvgIcon-root {
+    color: $text-color;
+  }
+  .MuiOutlinedInput-notchedOutline {
+    border-color: $border-color !important;
+  }
+  .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
+    border-color: $disabled-border-color !important;
+  }
+
+  input,
+  textarea,
+  label {
+    color: $text-color;
   }
 }

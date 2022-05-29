@@ -24,7 +24,7 @@ const Pools = ({ user, open, onClose }) => {
     poolsRef.child(poolId).set({
       ...pool,
       id: poolId,
-      userId,
+      creator: userId,
     });
     setPlaceholderPool({});
   }
@@ -38,7 +38,12 @@ const Pools = ({ user, open, onClose }) => {
     setPlaceholderPool(defaultPool);
   }
   function deletePool(id) {
-    poolsRef.child(id).set(null);
+    if (placeholderPool) {
+      setPlaceholderPool({});
+    }
+    if (id) {
+      poolsRef.child(id).set(null);
+    }
   }
 
   function subscribeOnpools() {
@@ -58,7 +63,7 @@ const Pools = ({ user, open, onClose }) => {
 
   function renderPools() {
     return (
-      <div className="pools-container">
+      <div className="pools">
         {pools.map((pool, idx) => {
           return (
             <Pool
@@ -112,6 +117,7 @@ const Pools = ({ user, open, onClose }) => {
               pool={placeholderPool}
               isCreateMode
               createPool={createPool}
+              deletePool={deletePool}
               userId={userId}
               isManager={isManager}
             />

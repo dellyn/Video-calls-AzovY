@@ -1,32 +1,30 @@
 export const defaultOptions = {
-  0: {
+  1: {
     value: "Option 1",
-    id: 0,
+    id: 1,
     index: 0,
   },
-  1: {
+  2: {
     value: "Option 2",
-    id: 1,
+    id: 2,
     index: 1,
   },
-  2: {
+  3: {
     value: "Option 3",
-    id: 2,
+    id: 3,
     index: 2,
   },
 };
 
 export const defaultPool = {
+  id: null,
+  creator: null,
   title: "",
-  description: "",
   options: defaultOptions,
-  questionsType: "",
   votes: {
     options: {},
     users: {},
   },
-  type: "",
-  id: null,
 };
 
 function arrayToObject(arr) {
@@ -39,7 +37,7 @@ function arrayToObject(arr) {
 }
 
 function getOptions({ options, votes }) {
-  const allVotesCount = Object.values(votes.options).length;
+  const allVotesCount = Object.values(votes.users).length;
   const arrayOfOptionsWithResults = Object.keys(options)
     .map((optionId) => {
       return {

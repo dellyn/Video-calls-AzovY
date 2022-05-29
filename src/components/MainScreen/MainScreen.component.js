@@ -12,6 +12,12 @@ const MainScreen = (props) => {
   const participantRef = useRef(props.participants);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isPoolsOpen, setIsPoolsOpen] = useState(true);
+  const [isCurrentTabOpen, setIsCurrentTabOpen] = useState(false);
+  const [streamState, setStreamState] = useState({
+    mic: false,
+    video: false,
+    screen: false,
+  });
 
   const onMicClick = (micEnabled) => {
     if (props.stream) {
@@ -42,7 +48,16 @@ const MainScreen = (props) => {
     props.setMainStream(stream);
   };
 
-  const onScreenShareEnd = async () => {
+  const setScreenState = (isEnabled) => {
+    setStreamState((currentState) => {
+      return {
+        ...currentState,
+        screen: isEnabled,
+      };
+    });
+  };
+
+  const handleScreenShareEnd = async () => {
     const localStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true,
@@ -53,29 +68,42 @@ const MainScreen = (props) => {
     )[0].video;
 
     updateStream(localStream);
+    setScreenState(false);
 
     props.updateUser({ screen: false });
   };
+  function stopSharing() {
+    const videoElem = document.querySelector(".screen-presenter-video");
+    if (videoElem) {
+      const tracks = videoElem.srcObject.getTracks();
+      tracks.forEach((track) => track.stop());
+      videoElem.srcObject = null;
+    }
+    handleScreenShareEnd();
+  }
 
   const onScreenClick = async () => {
-    let mediaStream;
-    if (navigator.getDisplayMedia) {
-      mediaStream = await navigator.getDisplayMedia({ video: true });
-    } else if (navigator.mediaDevices.getDisplayMedia) {
-      mediaStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-      });
+    if (streamState.screen) {
+      stopSharing();
     } else {
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { mediaSource: "screen" },
-      });
+      let mediaStream;
+      if (navigator.getDisplayMedia) {
+        mediaStream = await navigator.getDisplayMedia({ video: true });
+      } else if (navigator.mediaDevices.getDisplayMedia) {
+        mediaStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+      } else {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { mediaSource: "screen" },
+        });
+      }
+
+      mediaStream.getVideoTracks()[0].onended = handleScreenShareEnd;
+      updateStream(mediaStream);
+      setScreenState(true);
+      props.updateUser({ screen: true });
     }
-
-    mediaStream.getVideoTracks()[0].onended = onScreenShareEnd;
-
-    updateStream(mediaStream);
-
-    props.updateUser({ screen: true });
   };
 
   function openChat() {
@@ -96,14 +124,29 @@ const MainScreen = (props) => {
     isChatOpen,
     isPoolsOpen,
   });
+
+  document.addEventListener("visibilitychange", function (event) {
+    if (document.hidden) {
+      setIsCurrentTabOpen(false);
+    } else {
+      setIsCurrentTabOpen(true);
+    }
+  });
+
   return (
     <div className="wrapper">
       <div className="main-screen">
-        <Participants isChatOpen={isChatOpen || isPoolsOpen} />
+        <Participants
+          streamState={streamState}
+          isChatOpen={isChatOpen || isPoolsOpen}
+          isCurrentTabOpen={isCurrentTabOpen}
+        />
       </div>
 
       <div className="footer">
         <MeetingFooter
+          streamState={streamState}
+          setStreamState={setStreamState}
           onScreenClick={onScreenClick}
           onMicClick={onMicClick}
           onVideoClick={onVideoClick}

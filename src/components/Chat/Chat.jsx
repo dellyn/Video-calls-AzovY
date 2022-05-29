@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import roomRef, { getTimestamp } from "../../server/firebase";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -9,12 +9,14 @@ import "./chat.scss";
 import moment from "moment";
 import CloseButton from "../Shared/CloseButton/CloseButton";
 
+let timeout;
 const chatRef = roomRef.child("chat");
 const Chat = ({ user, open, onClose }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const userId = Object.keys(user)[0];
   const currentUser = user[userId];
+  const inputRef = useRef(null);
 
   function changeMessage({ target }) {
     setMessage(target.value);
@@ -27,7 +29,6 @@ const Chat = ({ user, open, onClose }) => {
       senderId: userId,
       id: messageId,
       senderName: currentUser.name,
-      avatarColor: currentUser.avatarColor,
       message,
       date: getTimestamp(),
     });
@@ -47,13 +48,13 @@ const Chat = ({ user, open, onClose }) => {
     });
   }
 
-  function renderMessages({ id, senderName, senderId, message, avatarColor }) {
+  function renderMessages({ id, senderName, senderId, message }) {
     return (
       <div
         key={id}
         className={`message-container ${senderId === userId ? "me" : ""} `}
       >
-        <div style={{ background: avatarColor }} className="avatar">
+        <div style={{ background: "red" }} className="avatar">
           {senderName}
         </div>
         <div className="message">{message}</div>
@@ -66,6 +67,15 @@ const Chat = ({ user, open, onClose }) => {
       subscribeOnMessages();
     }
   }, [chatRef]);
+
+  useEffect(() => {
+    if (open) {
+      timeout = setTimeout(() => {
+        inputRef.current.focus();
+      }, 0);
+    }
+    return () => clearTimeout(timeout);
+  }, [open]);
 
   return (
     <div className="right-panel">
@@ -94,6 +104,7 @@ const Chat = ({ user, open, onClose }) => {
             variant="outlined"
             type="text"
             fullWidth
+            inputProps={{ ref: inputRef }}
           />
           <Button type="submit" className="send-btn">
             Send

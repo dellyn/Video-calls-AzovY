@@ -4,10 +4,12 @@ import TextField from "@material-ui/core/TextField";
 import Option from "./Option/Option";
 import isEmpty from "lodash.isempty";
 import { Button, FormControl, FormLabel, IconButton } from "@material-ui/core";
-import "./pool.scss";
 import isEqual from "lodash.isequal";
 import DeleteButton from "../../Shared/DeleteButton/DeleteButton";
 import classNames from "classnames";
+import RestoreIcon from "@material-ui/icons/Restore";
+import EditIcon from "@material-ui/icons/Edit";
+import "./pool.scss";
 
 const Pool = ({
   isManager,
@@ -19,9 +21,7 @@ const Pool = ({
   userId,
 }) => {
   const [pool, setPool] = useState(sourcePool);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const isEditing = isEditMode || isCreateMode;
-  const isViewMode = !isEditMode && !isCreateMode;
+  const isViewMode = !isCreateMode;
   const selectedOptionId = pool.votes.users[userId]?.optionId;
   const isVoted = !!selectedOptionId;
   const options = Object.values(pool.options);
@@ -104,21 +104,23 @@ const Pool = ({
   }
 
   function renderPoolActions() {
-    if (isViewMode && isVoted) {
+    if (isViewMode) {
       return (
         <div className="actions">
-          <IconButton onClick={retractVote} className="retract-btn">
-            retract
-          </IconButton>
+          {isVoted && (
+            <IconButton onClick={retractVote} className="retract-btn">
+              <RestoreIcon aria-hidden />
+            </IconButton>
+          )}
+          {pool.creator === userId && (
+            <DeleteButton onClick={() => deletePool(pool.id)} />
+          )}
         </div>
       );
     }
     if (isCreateMode) {
       return (
         <div className="actions">
-          <IconButton onClick={() => setIsEditMode(true)} className="close-btn">
-            e
-          </IconButton>
           <DeleteButton onClick={() => deletePool(pool.id)} />
         </div>
       );
@@ -132,6 +134,7 @@ const Pool = ({
   return (
     <div className={containerClassName}>
       <form onSubmit={handleSave}>
+        {!isCreateMode && <div className="creator">creator</div>}
         <header>
           <FormControl fullWidth required className="field-container title">
             <FormLabel className="field-label title" htmlFor="title">
@@ -148,13 +151,13 @@ const Pool = ({
               fullWidth
               required
               InputProps={{
-                readOnly: !isEditing,
+                readOnly: !isCreateMode,
               }}
             />
           </FormControl>
           {renderPoolActions()}
         </header>
-        {(isEditing || pool.description) && (
+        {(isCreateMode || pool.description) && (
           <span className="field-label description" htmlFor="description">
             Anonymous pool
           </span>
@@ -173,39 +176,44 @@ const Pool = ({
                   select={vote}
                   checked={selectedOptionId === option.id}
                   isCreateMode={isCreateMode}
-                  isEditMode={isEditMode}
+                  isEditMode={isCreateMode}
                   onChange={onChangeQuestion}
                   isVoted={isVoted}
                 />
               );
             })}
-          {isEditing && (
+          {isCreateMode && (
             <div className="add-option-container">
               <Option
                 pool={pool}
                 options={options}
                 isPlaceholder
                 isCreateMode={isCreateMode}
-                isEditMode={isEditMode}
+                isEditMode={isCreateMode}
                 onChange={onChangeQuestion}
               />
             </div>
           )}
         </div>
-        {isCreateMode && (
-          <div className="create-btn-container">
-            <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
-              Create
-            </Button>
-          </div>
-        )}
-        {isManager && isEditMode && (
-          <div className="save-btn-container">
-            <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
-              Save
-            </Button>
-          </div>
-        )}
+        <div className="actions">
+          {isVoted && (
+            <>
+              <div className="view-results-container">
+                <Button className="view-results">View Results</Button>
+              </div>
+              <div className="present-results-container">
+                <Button className="present-results">Present Results</Button>
+              </div>
+            </>
+          )}
+          {isCreateMode && (
+            <div className="create-btn-container">
+              <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>
+                Create
+              </Button>
+            </div>
+          )}
+        </div>
       </form>
     </div>
   );
