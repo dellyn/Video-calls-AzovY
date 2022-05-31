@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Participant } from "./Participant/Participant.component";
 import classNames from "classnames";
 import "./Participants.scss";
+import { checkIsBrokenUser } from "../../App";
 
 const Participants = (props) => {
   const containerRef = useRef(null);
@@ -32,8 +33,12 @@ const Participants = (props) => {
     }
   }, [props.currentUser, props.stream]);
 
-  const renderParticipants = participantKey.map((id, index) => {
-    const currentParticipant = props.participants[id];
+  const filteredParticipantKeys = participantKey.filter((id) => {
+    return !checkIsBrokenUser(props.participants[id]);
+  });
+  console.log(filteredParticipantKeys);
+  const renderParticipants = filteredParticipantKeys.map((id, index) => {
+    const currentParticipant = { ...props.participants[id], id };
     const isCurrentUser = currentParticipant.currentUser;
     if (isCurrentUser) {
       return null;

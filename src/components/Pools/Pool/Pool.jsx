@@ -19,12 +19,14 @@ const Pool = ({
   updatePool,
   deletePool,
   userId,
+  participants = [],
 }) => {
   const [pool, setPool] = useState(sourcePool);
   const isViewMode = !isCreateMode;
   const selectedOptionId = pool.votes.users[userId]?.optionId;
   const isVoted = !!selectedOptionId;
   const options = Object.values(pool.options);
+  const creator = participants.find(({ id }) => id === pool.creator) || {};
   const containerClassName = classNames("pool-container", {
     "is-view": isViewMode,
     voted: isVoted,
@@ -53,33 +55,31 @@ const Pool = ({
     });
   }
 
-  function vote(optionId) {
-    return (event) => {
-      // TODO prevent duplicates
-      if (event.target.checked && !isVoted) {
-        const optionUsers = pool.votes.options[optionId] || [];
-        const updatedOptions = {
-          ...pool.votes.options,
-          [optionId]: [...optionUsers, userId],
-        };
+  function vote(optionId, checked) {
+    // TODO prevent duplicates
+    if (checked && !isVoted) {
+      const optionUsers = pool.votes.options[optionId] || [];
+      const updatedOptions = {
+        ...pool.votes.options,
+        [optionId]: [...optionUsers, userId],
+      };
 
-        const updatedUsers = {
-          ...pool.votes.users,
-          [userId]: {
-            optionId,
-          },
-        };
+      const updatedUsers = {
+        ...pool.votes.users,
+        [userId]: {
+          optionId,
+        },
+      };
 
-        const updatedPool = {
-          ...pool,
-          votes: {
-            options: updatedOptions,
-            users: updatedUsers,
-          },
-        };
-        updatePool(updatedPool);
-      }
-    };
+      const updatedPool = {
+        ...pool,
+        votes: {
+          options: updatedOptions,
+          users: updatedUsers,
+        },
+      };
+      updatePool(updatedPool);
+    }
   }
 
   function retractVote() {
@@ -108,7 +108,11 @@ const Pool = ({
       return (
         <div className="actions">
           {isVoted && (
-            <IconButton onClick={retractVote} className="retract-btn">
+            <IconButton
+              size="small"
+              onClick={retractVote}
+              className="retract-btn"
+            >
               <RestoreIcon aria-hidden />
             </IconButton>
           )}
@@ -131,15 +135,17 @@ const Pool = ({
     setPool(sourcePool);
   }, [sourcePool]);
 
+  console.log(pool);
   return (
     <div className={containerClassName}>
       <form onSubmit={handleSave}>
-        {!isCreateMode && <div className="creator">creator</div>}
+        {/* {!isCreateMode && <div className="creator-name">{creator.name}</div>} */}
         <header>
           <FormControl fullWidth required className="field-container title">
             <FormLabel className="field-label title" htmlFor="title">
               Pool Title
             </FormLabel>
+
             <TextField
               id="title"
               onChange={onChange}
@@ -155,12 +161,13 @@ const Pool = ({
               }}
             />
           </FormControl>
+
           {renderPoolActions()}
         </header>
-        {(isCreateMode || pool.description) && (
-          <span className="field-label description" htmlFor="description">
-            Anonymous pool
-          </span>
+        {isViewMode && (
+          <div className="votes-count">
+            Votes: {Object.keys(pool.votes.users).length}
+          </div>
         )}
 
         <div className="options">
@@ -196,7 +203,7 @@ const Pool = ({
           )}
         </div>
         <div className="actions">
-          {isVoted && (
+          {/* {isVoted && (
             <>
               <div className="view-results-container">
                 <Button className="view-results">View Results</Button>
@@ -205,7 +212,7 @@ const Pool = ({
                 <Button className="present-results">Present Results</Button>
               </div>
             </>
-          )}
+          )} */}
           {isCreateMode && (
             <div className="create-btn-container">
               <Button disabled={isEqual(pool, sourcePool)} type={handleSave}>

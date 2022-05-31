@@ -1,9 +1,10 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
-import { Checkbox, IconButton } from "@material-ui/core";
 import "./option.scss";
 import { generateId } from "../../../../App";
 import DeleteButton from "../../../Shared/DeleteButton/DeleteButton";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import { FormControlLabel, Radio } from "@material-ui/core";
 const Option = ({
   option = {},
   options,
@@ -30,7 +31,6 @@ const Option = ({
   }
   function handleDelete() {
     const updatedQuestions = options.filter(({ id }) => id !== option.id);
-
     onChange({ name: "options", value: updatedQuestions });
   }
   function addOption() {
@@ -47,24 +47,39 @@ const Option = ({
   }
   function renderOptionHeading() {
     if (isVoted) {
-      return <div className="result-number">{`${option.result}%`}</div>;
+      return (
+        <>
+          <div className="result-number">{`${option.result}%`}</div>
+          {checked && <CheckCircleIcon aria-hidden className="checked-icon" />}
+        </>
+      );
     }
     return (
-      <Checkbox
-        checked={checked}
-        onChange={select(option.id)}
-        color="primary"
-        size="small"
-        disableRipple
-        disabled={isCreateMode}
-        readOnly={!isEditMode || !isCreateMode}
+      <FormControlLabel
+        value="female"
+        control={
+          <Radio
+            checked={checked}
+            onChange={() => select(option.id, !checked)}
+            color="primary"
+            size="small"
+            disableRipple
+            disabled={isCreateMode}
+            readOnly={!isEditMode || !isCreateMode}
+          />
+        }
       />
     );
   }
 
   return (
-    <div className="option-container">
-      <div className="option-heading">{renderOptionHeading()}</div>
+    <div
+      className="option-container"
+      onClick={!isCreateMode ? () => select(option.id, !checked) : null}
+    >
+      <div className={`option-heading ${checked ? "checked" : ""}`}>
+        {renderOptionHeading()}
+      </div>
       <div className="wrapper">
         <div className="option-field">
           <div className="field-container option">

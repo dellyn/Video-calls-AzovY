@@ -1,3 +1,5 @@
+@import "../../mixins/vars.scss";
+
 .meeting-footer {
   background: #202124;
   height: 100%;
@@ -9,7 +11,7 @@
 .meeting-icons {
   color: white;
   border-radius: 50%;
-  background: #3c4043;
+  background: $inactive-color;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -19,21 +21,25 @@
   justify-content: center;
   cursor: pointer;
   position: relative;
+  &.screen,
+  &.chat,
+  &.pools {
+    background-color: $btn-color;
+  }
+  &.active {
+    background-color: $active-color;
+  }
 
   .notification-icon {
     position: absolute;
-    top: 5px;
-    right: 7px;
-    width: 12px;
-    height: 12px;
+    top: 3px;
+    right: 5px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
-    background-color: #ea4335;
-    border: 3px solid #3c4043;
+    background-color: $inactive-color;
+    border: 3px solid $btn-color;
   }
-}
-
-.active {
-  background-color: #ea4335;
 }
 
 div[disabled] {

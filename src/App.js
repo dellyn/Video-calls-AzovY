@@ -12,6 +12,14 @@ import {
 } from "./store/actioncreator";
 import { connect } from "react-redux";
 
+export function checkIsBrokenUser(user) {
+  return (
+    !user.hasOwnProperty("id") ||
+    !user.name ||
+    !user.hasOwnProperty("peerConnection") ||
+    !user.hasOwnProperty("audio")
+  );
+}
 export const stringToColour = function (str) {
   if (str) {
     var hash = 0;
@@ -88,13 +96,6 @@ function App(props) {
     }
   }, [userName]);
 
-  document.addEventListener("visibilitychange", function (event) {
-    if (document.hidden) {
-      console.log("not visible");
-    } else {
-      console.log("is visible");
-    }
-  });
   useEffect(() => {
     if (isStreamSet && isUserSet) {
       participantRef.on("child_added", (snap) => {
@@ -112,6 +113,7 @@ function App(props) {
         props.addParticipant({
           [snap.key]: {
             name,
+            id: snap.key,
             ...preferences,
           },
         });

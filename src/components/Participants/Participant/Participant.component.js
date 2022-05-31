@@ -2,9 +2,8 @@ import React from "react";
 import Card from "../../Shared/Card/Card.component";
 import "./Participant.scss";
 import classNames from "classnames";
-import { stringToColour } from "../../../App";
 import MicOffIcon from "@material-ui/icons/MicOff";
-import MicIcon from "@material-ui/icons/Mic";
+import AvatarComponent from "../../Shared/Avatar/Avatar";
 
 function getGridStyle(participantKey, width) {
   let maxWidth = 800;
@@ -65,8 +64,6 @@ function getGridStyle(participantKey, width) {
 }
 export const Participant = (props) => {
   const {
-    containerRef,
-    participantKey,
     isScreenPresenter,
     curentIndex,
     currentParticipant,
@@ -80,6 +77,10 @@ export const Participant = (props) => {
     "is-screen-presenter": isScreenPresenter,
     "is-current-user": currentUser,
     "is-current-tab-open": isCurrentTabOpen,
+    "has-video": currentParticipant.video,
+    "no-video": !currentParticipant.video && !currentParticipant.screen,
+    "has-screen": currentParticipant.screen,
+    "has-audio": currentParticipant.audio,
   });
 
   if (!currentParticipant) return <></>;
@@ -96,14 +97,11 @@ export const Participant = (props) => {
           autoPlay
           playsInline
         ></video>
-
         {showAvatar && (
-          <div
-            style={{ background: stringToColour(currentParticipant.id) }}
-            className="avatar"
-          >
-            {currentParticipant?.name ? currentParticipant.name[0] : ""}
-          </div>
+          <AvatarComponent
+            user={currentParticipant}
+            currentUser={currentUser}
+          />
         )}
         <div className="user-info-container">
           {!currentParticipant.audio && (

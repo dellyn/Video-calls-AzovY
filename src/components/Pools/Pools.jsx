@@ -11,7 +11,7 @@ import { defaultPool, mapPool } from "./utils";
 import "./pools.scss";
 const poolsRef = roomRef.child("pools");
 
-const Pools = ({ user, open, onClose }) => {
+const Pools = ({ user, open, onClose, participants }) => {
   const [pools, setPools] = useState([]);
   const [placeholderPool, setPlaceholderPool] = useState({});
   const userId = Object.keys(user)[0];
@@ -74,6 +74,7 @@ const Pools = ({ user, open, onClose }) => {
               deletePool={deletePool}
               userId={userId}
               isManager={isManager}
+              participants={participants}
             />
           );
         })}

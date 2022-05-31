@@ -4,7 +4,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 const DeleteButton = ({ onClick, className = "delete-btn" }) => {
   return (
-    <IconButton onClick={onClick} className={className}>
+    <IconButton size="small" onClick={onClick} className={className}>
       <DeleteIcon aria-hidden />
     </IconButton>
   );

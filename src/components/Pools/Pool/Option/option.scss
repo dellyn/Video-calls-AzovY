@@ -7,16 +7,40 @@
   transition: all 0.2s ease-in-out;
   margin: 8px 0;
   color: $text-color;
+  border-radius: 8px;
+  height: 50px;
+  padding: 4px;
+  align-items: center;
+
+  .delete-icon-container {
+    padding: 6px;
+  }
 
   .wrapper {
     margin-left: 8px;
   }
 
   .option-heading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    &.checked {
+      margin-top: 10px;
+    }
+
     .result-number {
       min-width: 37px;
       font-size: 14px;
       text-align: right;
+    }
+    .checked-icon {
+      width: 15px;
+      margin-left: auto;
+    }
+    .MuiFormControlLabel-root {
+      margin: 0;
     }
   }
 
@@ -36,14 +60,14 @@
 
   .result-container {
     visibility: hidden;
+    width: 100%;
 
     &.voted {
       visibility: visible;
     }
-    width: 100%;
 
     .bar {
-      height: 6px;
+      height: 4px;
       border-radius: 8px;
       background-color: $text-color;
       min-width: 4px;

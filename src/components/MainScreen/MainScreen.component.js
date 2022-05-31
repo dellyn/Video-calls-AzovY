@@ -7,26 +7,33 @@ import Chat from "../Chat/Chat";
 import Pools from "../Pools/Pools";
 import "./MainScreen.scss";
 import useNotification from "../../hooks/useNotification";
+import { checkIsBrokenUser } from "../../App";
 
 const MainScreen = (props) => {
-  const participantRef = useRef(props.participants);
+  const arr = Object.entries(props.participants);
+  const filtered = arr.filter(([key, value]) => checkIsBrokenUser(value));
+
+  const participantRef = useRef(filtered);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isPoolsOpen, setIsPoolsOpen] = useState(true);
-  const [isCurrentTabOpen, setIsCurrentTabOpen] = useState(false);
+  const [isCurrentTabOpen, setIsCurrentTabOpen] = useState(true);
   const [streamState, setStreamState] = useState({
     mic: false,
     video: false,
     screen: false,
   });
+  const isSomeoneOtherShareScreen = Object.values(participantRef.current).some(
+    (user) => user.screen && user.id !== props.currentUser.id
+  );
 
   const onMicClick = (micEnabled) => {
-    if (props.stream) {
+    if (props.stream && props.stream.getAudioTracks()[0]) {
       props.stream.getAudioTracks()[0].enabled = micEnabled;
       props.updateUser({ audio: micEnabled });
     }
   };
   const onVideoClick = (videoEnabled) => {
-    if (props.stream) {
+    if (props.stream && props.stream.getAudioTracks()[0]) {
       props.stream.getVideoTracks()[0].enabled = videoEnabled;
       props.updateUser({ video: videoEnabled });
     }
@@ -85,7 +92,7 @@ const MainScreen = (props) => {
   const onScreenClick = async () => {
     if (streamState.screen) {
       stopSharing();
-    } else {
+    } else if (!isSomeoneOtherShareScreen) {
       let mediaStream;
       if (navigator.getDisplayMedia) {
         mediaStream = await navigator.getDisplayMedia({ video: true });
@@ -142,7 +149,6 @@ const MainScreen = (props) => {
           isCurrentTabOpen={isCurrentTabOpen}
         />
       </div>
-
       <div className="footer">
         <MeetingFooter
           streamState={streamState}
@@ -154,10 +160,21 @@ const MainScreen = (props) => {
           openPools={openPools}
           hasChatNotification={hasChatNotification}
           hasPoolsNotification={hasPoolsNotification}
+          isChatOpen={isChatOpen}
+          isPoolsOpen={isPoolsOpen}
+          isSomeoneOtherShareScreen={isSomeoneOtherShareScreen}
         />
       </div>
-      <Chat open={isChatOpen} onClose={closeChat} />
-      <Pools open={isPoolsOpen} onClose={closePools} />
+      <Chat
+        open={isChatOpen}
+        onClose={closeChat}
+        participants={Object.values(participantRef.current) || []}
+      />
+      <Pools
+        open={isPoolsOpen}
+        onClose={closePools}
+        participants={Object.values(participantRef.current) || []}
+      />
     </div>
   );
 };

@@ -1,16 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import ChatIcon from "@material-ui/icons/Chat";
-import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import ScreenShareIcon from "@material-ui/icons/ScreenShare";
+import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
+import classNames from "classnames";
 import "./MeetingFooter.scss";
 
 const MeetingFooter = (props) => {
-  const { streamState, setStreamState } = props;
+  const {
+    streamState,
+    setStreamState,
+    isSomeoneOtherShareScreen,
+    openChat,
+    openPools,
+    isChatOpen,
+    isPoolsOpen,
+  } = props;
+  const screenIconClassName = classNames("meeting-icons screen", {
+    active: streamState.screen,
+    disabled: isSomeoneOtherShareScreen,
+  });
+
+  function getScreenIconLabel() {
+    if (isSomeoneOtherShareScreen) {
+      return "You cant start screen share until other member stop to present the screen";
+    }
+    return streamState.screen ? "Stop Share" : "Share Screen";
+  }
 
   const micClick = () => {
     setStreamState((currentState) => {
@@ -45,28 +66,36 @@ const MeetingFooter = (props) => {
   return (
     <div className="meeting-footer">
       <div
-        className={"meeting-icons " + (streamState.mic ? "active" : "")}
+        className={"meeting-icons mic " + (streamState.mic ? "active" : "")}
         data-tip={streamState.mic ? "Mute Audio" : "Unmute Audio"}
         onClick={micClick}
       >
         {streamState.mic ? <MicIcon /> : <MicOffIcon />}
       </div>
       <div
-        className={"meeting-icons " + (streamState.video ? "active" : "")}
+        className={"meeting-icons video " + (streamState.video ? "active" : "")}
         data-tip={streamState.video ? "Hide Video" : "Show Video"}
         onClick={onVideoClick}
       >
         {streamState.video ? <VideocamIcon /> : <VideocamOffIcon />}
       </div>
       <div
-        className={"meeting-icons " + (streamState.screen ? "active" : "")}
-        data-tip="Share Screen"
+        className={screenIconClassName}
+        data-tip={getScreenIconLabel()}
         onClick={onScreenClick}
       >
-        <ScreenShareIcon aria-hidden />
+        {isSomeoneOtherShareScreen ? (
+          <StopScreenShareIcon aria-hidden />
+        ) : (
+          <ScreenShareIcon aria-hidden />
+        )}
       </div>
       <div className="notification-icon-container">
-        <div className="meeting-icons" onClick={props.openChat}>
+        <div
+          className={`meeting-icons chat ${isChatOpen ? "active" : ""}`}
+          onClick={openChat}
+          data-tip={"Chat"}
+        >
           {props.hasChatNotification && (
             <div className="notification-icon"></div>
           )}
@@ -74,7 +103,11 @@ const MeetingFooter = (props) => {
         </div>
       </div>
       <div className="notification-icon-container">
-        <div className="meeting-icons" onClick={props.openPools}>
+        <div
+          className={`meeting-icons pools ${isPoolsOpen ? "active" : ""}`}
+          data-tip={"Pools"}
+          onClick={openPools}
+        >
           {props.hasPoolsNotification && (
             <div className="notification-icon"></div>
           )}

@@ -1,10 +1,10 @@
-$participant-height-while-sharing: 180px;
+@import "../../mixins/vars.scss";
+$participant-height-while-sharing: 160px;
 $max-width: 100%;
 
 .participants {
   display: flex;
   flex-wrap: wrap;
-  height: calc(90vh - 16px);
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -14,11 +14,8 @@ $max-width: 100%;
 
   .participant {
     flex-grow: 1;
-    margin: 8px;
+    margin: 2px;
     max-height: 30vw;
-    &.is-current-user {
-      padding: 24px 0;
-    }
   }
   &.is-chat-open {
     width: calc(100% - 400px);
@@ -75,26 +72,39 @@ $max-width: 100%;
   //
   &.has-screen-presenter {
     justify-content: start;
+    &.members-2 {
+      .is-current-user {
+        position: relative;
+      }
+    }
     .participant {
       flex-grow: 0;
       height: $participant-height-while-sharing;
       width: calc(100% / (var(--members-count)));
-      max-width: 330px;
+      max-width: 250px;
       padding: 0;
     }
     .is-screen-presenter {
       order: 9999;
-      height: calc(100% - #{$participant-height-while-sharing} - 32px);
+      left: 0;
+      height: calc(100% - #{$participant-height-while-sharing} - 8px);
       width: 100%;
       max-height: 100%;
-      width: 100%;
       max-width: 100%;
       padding: 0;
       margin: 0 auto;
+      video {
+        object-fit: contain;
+      }
       .card {
+        border: 2px solid $active-color;
+        padding: 2px;
         max-width: $max-width;
         width: auto;
         height: 100%;
+        position: relative;
+        width: fit-content;
+        margin: auto;
       }
     }
   }

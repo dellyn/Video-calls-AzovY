@@ -8,10 +8,12 @@ import { generateId } from "../../App";
 import "./chat.scss";
 import moment from "moment";
 import CloseButton from "../Shared/CloseButton/CloseButton";
+import AvatarComponent from "../Shared/Avatar/Avatar";
 
 let timeout;
 const chatRef = roomRef.child("chat");
-const Chat = ({ user, open, onClose }) => {
+const Chat = ({ user, open, onClose, participants }) => {
+  console.log(participants);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const userId = Object.keys(user)[0];
@@ -49,14 +51,15 @@ const Chat = ({ user, open, onClose }) => {
   }
 
   function renderMessages({ id, senderName, senderId, message }) {
+    const sender = participants.find(
+      (participant) => participant.id === senderId
+    );
     return (
       <div
         key={id}
         className={`message-container ${senderId === userId ? "me" : ""} `}
       >
-        <div style={{ background: "red" }} className="avatar">
-          {senderName}
-        </div>
+        <AvatarComponent size="small" user={sender} maxSymbols={2} />
         <div className="message">{message}</div>
       </div>
     );
@@ -100,11 +103,13 @@ const Chat = ({ user, open, onClose }) => {
           <TextField
             onChange={changeMessage}
             value={message}
+            placeholder="Enter message.."
             size="small"
             variant="outlined"
             type="text"
             fullWidth
             inputProps={{ ref: inputRef }}
+            className="message-field"
           />
           <Button type="submit" className="send-btn">
             Send

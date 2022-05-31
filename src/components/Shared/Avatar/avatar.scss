@@ -1,0 +1,11 @@
+.avatar {
+  width: 60px;
+  height: 60px;
+  font-weight: 700;
+  text-align: center;
+  &.small {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
