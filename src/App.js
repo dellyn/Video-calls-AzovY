@@ -1,5 +1,5 @@
 import MainScreen from "./components/MainScreen/MainScreen";
-import roomRef, { db } from "./server/firebase";
+import roomRef, { db, firepadRef } from "./server/firebase";
 import "./App.scss";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
@@ -11,7 +11,10 @@ import {
   updateParticipant,
 } from "./store/actioncreator";
 import { connect } from "react-redux";
+import Login from "./components/Login/Login";
+import isEmpty from "lodash.isempty";
 
+export const placeholderId = "001";
 export function checkIsBrokenUser(user) {
   return (
     !user.hasOwnProperty("id") ||
@@ -34,10 +37,11 @@ export const stringToColour = function (str) {
     return colour;
   }
 };
+
 export function getRoomId() {
-  const urlparams = new URLSearchParams(window.location.search);
-  const roomId = urlparams.get("id");
-  return roomId;
+  const placeholderId = "001";
+  var pathArray = window.location.pathname.split("/");
+  return pathArray[1] || placeholderId;
 }
 
 export function generateId() {
@@ -47,10 +51,23 @@ const connectedRef = db.database().ref(".info/connected");
 const participantRef = roomRef.child("participants");
 
 function App(props) {
+  const [firebaseUser, setFirebaseUser] = useState({});
   const isUserSet = !!props.user;
   const isStreamSet = !!props.stream;
   const [userName, setUserName] = useState(null);
+  const [isRoomExist, setIsRoomExist] = useState(false);
+  const [wantsToJoin, setWantsToJoin] = useState(false);
+  const [roomId, setRoomId] = useState(null);
+  const urlId = getRoomId();
 
+  function createRoomById(id) {
+    firepadRef.child(id).set({ creator: uuidv4() });
+    setRoomId(id);
+    setWantsToJoin(true);
+  }
+  function joinRoom() {
+    setWantsToJoin(true);
+  }
   const getUserStream = async () => {
     const localStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -60,7 +77,7 @@ function App(props) {
     return localStream;
   };
 
-  async function initialConnection(params) {
+  async function initialConnection() {
     const stream = await getUserStream();
     stream.getVideoTracks()[0].enabled = false;
     props.setMainStream(stream);
@@ -88,16 +105,23 @@ function App(props) {
   }
 
   useEffect(() => {
-    if (userName) {
-      initialConnection();
-    } else {
-      const name = prompt("What's your name?");
-      setUserName(name);
-    }
-  }, [userName]);
+    db.auth().onAuthStateChanged((user = {}) => {
+      setFirebaseUser(user || {});
+    });
+  }, []);
 
   useEffect(() => {
-    if (isStreamSet && isUserSet) {
+    if (!isEmpty(firebaseUser) && isRoomExist && wantsToJoin) {
+      initialConnection();
+    } else {
+      if (!userName) {
+        setUserName(firebaseUser.displayName);
+      }
+    }
+  }, [firebaseUser, isRoomExist && wantsToJoin]);
+
+  useEffect(() => {
+    if (isStreamSet && isUserSet && isRoomExist && wantsToJoin) {
       participantRef.on("child_added", (snap) => {
         const preferenceUpdateEvent = participantRef
           .child(snap.key)
@@ -122,19 +146,41 @@ function App(props) {
         props.removeParticipant(snap.key);
       });
     }
-  }, [isStreamSet, isUserSet]);
+  }, [isStreamSet, isUserSet, isRoomExist, wantsToJoin]);
+
+  function checkRoomIsExist(id) {
+    firepadRef.child(id).on("value", (snap) => {
+      const data = snap.val();
+      setIsRoomExist(!!data && id !== placeholderId);
+    });
+  }
 
   useEffect(() => {
-    const roomId = getRoomId();
-
-    if (!roomId) {
-      window.history.replaceState(null, "Meet", "?id=" + roomRef.key);
+    if (roomId) {
+      checkRoomIsExist(roomId);
     }
-  }, []);
+  }, [roomId]);
+
+  useEffect(() => {
+    if (urlId) {
+      checkRoomIsExist(urlId);
+    }
+  }, [urlId]);
 
   return (
     <div className="App">
-      <MainScreen />
+      {isRoomExist && wantsToJoin ? (
+        <MainScreen />
+      ) : (
+        <Login
+          user={props.user}
+          firebaseUser={firebaseUser}
+          setFirebaseUser={setFirebaseUser}
+          createRoomById={createRoomById}
+          joinRoom={joinRoom}
+          isRoomExist={isRoomExist}
+        />
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 
 export const db = firebase;
 
-const firepadRef = firebase.database().ref();
+export const firepadRef = firebase.database().ref();
 export function getTimestamp() {
   return firebase.firestore.Timestamp.now().toDate().toString();
 }
