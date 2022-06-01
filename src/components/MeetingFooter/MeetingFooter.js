@@ -9,7 +9,7 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
 import classNames from "classnames";
-import "./MeetingFooter.scss";
+import "./meetingFooter.scss";
 
 const MeetingFooter = (props) => {
   const {

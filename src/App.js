@@ -1,4 +1,4 @@
-import MainScreen from "./components/MainScreen/MainScreen.component";
+import MainScreen from "./components/MainScreen/MainScreen";
 import roomRef, { db } from "./server/firebase";
 import "./App.scss";
 import { v4 as uuidv4 } from "uuid";

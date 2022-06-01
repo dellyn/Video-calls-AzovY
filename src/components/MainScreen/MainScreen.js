@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import MeetingFooter from "../MeetingFooter/MeetingFooter.component";
-import Participants from "../Participants/Participants.component";
+import MeetingFooter from "../MeetingFooter/MeetingFooter";
+import Participants from "../Participants/Participants";
 import { connect } from "react-redux";
 import { setMainStream, updateUser } from "../../store/actioncreator";
 import Chat from "../Chat/Chat";
 import Pools from "../Pools/Pools";
-import "./MainScreen.scss";
 import useNotification from "../../hooks/useNotification";
 import { checkIsBrokenUser } from "../../App";
+import "./mainScreen.scss";
 
 const MainScreen = (props) => {
   const arr = Object.entries(props.participants);

@@ -1,9 +1,8 @@
 import React from "react";
-import Card from "../../Shared/Card/Card.component";
-import "./Participant.scss";
 import classNames from "classnames";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import AvatarComponent from "../../Shared/Avatar/Avatar";
+import "./participant.scss";
 
 function getGridStyle(participantKey, width) {
   let maxWidth = 800;

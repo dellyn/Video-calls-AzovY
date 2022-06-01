@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { Participant } from "./Participant/Participant.component";
+import { Participant } from "./Participant/Participant";
 import classNames from "classnames";
-import "./Participants.scss";
 import { checkIsBrokenUser } from "../../App";
+import "./participants.scss";
 
 const Participants = (props) => {
   const containerRef = useRef(null);
