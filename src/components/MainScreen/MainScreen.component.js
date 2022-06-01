@@ -12,10 +12,9 @@ import { checkIsBrokenUser } from "../../App";
 const MainScreen = (props) => {
   const arr = Object.entries(props.participants);
   const filtered = arr.filter(([key, value]) => checkIsBrokenUser(value));
-
   const participantRef = useRef(filtered);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isPoolsOpen, setIsPoolsOpen] = useState(true);
+  const [isPoolsOpen, setIsPoolsOpen] = useState(false);
   const [isCurrentTabOpen, setIsCurrentTabOpen] = useState(true);
   const [streamState, setStreamState] = useState({
     mic: false,

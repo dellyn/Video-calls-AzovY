@@ -87,7 +87,7 @@ export const Participant = (props) => {
 
   return (
     <div className={containerClassName}>
-      <Card>
+      <div className="card">
         <video
           ref={videoRef}
           className={`video ${
@@ -111,8 +111,8 @@ export const Participant = (props) => {
             {currentUser ? "You" : currentParticipant.name}
           </div>
         </div>
-      </Card>
-      <div className="layout"></div>
+        <div className="layout"></div>
+      </div>
     </div>
   );
 };

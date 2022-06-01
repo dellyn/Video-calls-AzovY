@@ -84,7 +84,7 @@ const MeetingFooter = (props) => {
         data-tip={getScreenIconLabel()}
         onClick={onScreenClick}
       >
-        {isSomeoneOtherShareScreen ? (
+        {isSomeoneOtherShareScreen && !streamState.screen ? (
           <StopScreenShareIcon aria-hidden />
         ) : (
           <ScreenShareIcon aria-hidden />
