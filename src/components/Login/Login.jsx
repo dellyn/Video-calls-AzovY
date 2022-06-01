@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import firepadRef, { db } from "../../server/firebase";
+import React, { useState } from "react";
+import { db } from "../../server/firebase";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import "./login.scss";
-import { getRoomId } from "../../App";
+import { placeholderId } from "../../App";
 
 const Login = ({
   firebaseUser,
-  setFirebaseUser,
   createRoomById,
-  joinRoomById,
   isRoomExist,
   joinRoom,
+  roomWasCheked,
+  urlId,
+  userWasFetched,
 }) => {
   const [isFetchingUser, setIsFetchingUser] = useState(null);
   const navigate = useHistory();
@@ -43,19 +44,21 @@ const Login = ({
   return (
     <div className="login container">
       <div className="wrapper">
-        <h1>Welcome to the azovyy video app</h1>
+        <h1>Welcome to the Azovy video app</h1>
         <div className="description">Are you ready to start the meeting?</div>
         {firebaseUser.uid ? (
           <>
             <Button onClick={signOut}>Sign out</Button>
-            {isRoomExist ? (
-              <Button onClick={joinRoom}>Join Meeting</Button>
+            {urlId !== placeholderId && (isRoomExist || !roomWasCheked) ? (
+              <Button onClick={joinRoom} disabled={!roomWasCheked}>
+                Join Meeting
+              </Button>
             ) : (
               <Button onClick={handleCrateRoomAndJoin}>Start Meeting</Button>
             )}
           </>
         ) : (
-          <Button onClick={signIn} disabled={isFetchingUser}>
+          <Button onClick={signIn} disabled={!userWasFetched || isFetchingUser}>
             Get started
           </Button>
         )}

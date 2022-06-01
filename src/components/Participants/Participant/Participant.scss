@@ -62,9 +62,6 @@
       text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);
     }
   }
-  &.is-current-user .card {
-    border: 2px solid green;
-  }
 
   &.is-screen-presenter.is-current-user {
     &.is-current-tab-open {

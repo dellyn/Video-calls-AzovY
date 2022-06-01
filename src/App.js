@@ -55,6 +55,8 @@ function App(props) {
   const isUserSet = !!props.user;
   const isStreamSet = !!props.stream;
   const [userName, setUserName] = useState(null);
+  const [userWasFetched, setUserWasFetched] = useState(false);
+  const [roomWasCheked, setRoomWasCheked] = useState(false);
   const [isRoomExist, setIsRoomExist] = useState(false);
   const [wantsToJoin, setWantsToJoin] = useState(false);
   const [roomId, setRoomId] = useState(null);
@@ -89,7 +91,7 @@ function App(props) {
           video: false,
           screen: false,
         };
-        const userId = generateId();
+        const userId = firebaseUser.uid;
         const userRef = participantRef.child(userId);
         userRef.set({
           userName,
@@ -106,6 +108,7 @@ function App(props) {
 
   useEffect(() => {
     db.auth().onAuthStateChanged((user = {}) => {
+      setUserWasFetched(true);
       setFirebaseUser(user || {});
     });
   }, []);
@@ -149,9 +152,11 @@ function App(props) {
   }, [isStreamSet, isUserSet, isRoomExist, wantsToJoin]);
 
   function checkRoomIsExist(id) {
+    setRoomWasCheked(false);
     firepadRef.child(id).on("value", (snap) => {
       const data = snap.val();
       setIsRoomExist(!!data && id !== placeholderId);
+      setRoomWasCheked(true);
     });
   }
 
@@ -162,7 +167,7 @@ function App(props) {
   }, [roomId]);
 
   useEffect(() => {
-    if (urlId) {
+    if (urlId && urlId !== placeholderId) {
       checkRoomIsExist(urlId);
     }
   }, [urlId]);
@@ -179,6 +184,9 @@ function App(props) {
           createRoomById={createRoomById}
           joinRoom={joinRoom}
           isRoomExist={isRoomExist}
+          roomWasCheked={roomWasCheked}
+          urlId={urlId}
+          userWasFetched={userWasFetched}
         />
       )}
     </div>
