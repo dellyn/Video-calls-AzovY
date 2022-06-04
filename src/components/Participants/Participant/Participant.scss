@@ -1,4 +1,5 @@
 @import "../../../mixins/vars.scss";
+
 .participant {
   height: 100%;
   width: 100%;
@@ -41,13 +42,37 @@
     align-items: center;
     text-transform: uppercase;
   }
+
+  .user-actions {
+    transition: all 0.2s ease-in-out;
+    visibility: hidden;
+    position: absolute;
+    opacity: 0;
+
+    .change-grid-icon {
+      width: 60px;
+      height: 60px;
+      background-color: $user-overlay-background-color;
+
+      svg {
+        font-size: 2em;
+      }
+    }
+  }
+
+  &:hover {
+    .user-actions {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
   .user-info-container {
     position: absolute;
     left: 10px;
     bottom: 10px;
     display: flex;
     align-items: center;
-    background-color: rgba(57, 57, 57, 0.5);
+    background-color: $user-overlay-background-color;
     padding: 4px 8px;
     border-radius: 8px;
     font-size: 13px;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { db } from "../../server/firebase";
 import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import "./login.scss";
 import { placeholderId } from "../../App";
@@ -16,11 +16,11 @@ const Login = ({
   userWasFetched,
 }) => {
   const [isFetchingUser, setIsFetchingUser] = useState(null);
-  const navigate = useHistory();
+  const navigate = useNavigate();
 
   function handleCrateRoomAndJoin() {
     const id = uuidv4();
-    navigate.push(id);
+    navigate(id);
     createRoomById(id);
   }
   async function signIn() {

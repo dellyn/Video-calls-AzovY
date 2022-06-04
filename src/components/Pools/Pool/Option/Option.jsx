@@ -110,12 +110,11 @@ const Option = ({
               />
             )}
           </div>
-          {!isPlaceholder && (
-            <DeleteButton
-              onClick={handleDelete}
-              className="delete-icon-container"
-            />
-          )}
+          <div className="delete-btn-container">
+            {!isPlaceholder && (
+              <DeleteButton onClick={handleDelete} className="delete-icon" />
+            )}
+          </div>
         </div>
         <div className={`result-container ${isVoted ? "voted" : ""}`}>
           <div className="bar-container">

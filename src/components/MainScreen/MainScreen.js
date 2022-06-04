@@ -9,6 +9,7 @@ import useNotification from "../../hooks/useNotification";
 import { checkIsBrokenUser } from "../../App";
 import "./mainScreen.scss";
 import Loading from "../Loading/Loading";
+import classNames from "classnames";
 
 const MainScreen = (props) => {
   const arr = Object.entries(props.participants);
@@ -152,14 +153,16 @@ const MainScreen = (props) => {
       setIsCurrentTabOpen(true);
     }
   });
-
+  const wrapperClassName = classNames("room-wrapper", {
+    "is-chat-open": isChatOpen || isPoolsOpen,
+  });
   return (
-    <div className="wrapper">
+    <div className={wrapperClassName}>
       <div className="main-screen">
         <Loading isLoading={!props.stream} />
         <Participants
           streamState={streamState}
-          isChatOpen={isChatOpen || isPoolsOpen}
+          isRightPanelOpen={isChatOpen || isPoolsOpen}
           isCurrentTabOpen={isCurrentTabOpen}
         />
       </div>

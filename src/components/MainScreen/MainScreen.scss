@@ -3,7 +3,8 @@ $footer-height: 70px;
 
 .main-screen {
   width: 100%;
-  height: calc(100vh - #{$footer-height});
+  height: 100%;
+  max-height: calc(100vh - #{$footer-height});
   background: #3c4043;
   display: flex;
   align-items: center;
@@ -28,6 +29,9 @@ $footer-height: 70px;
     padding: 16px;
     height: 100%;
     .header {
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       .close-btn {
@@ -36,11 +40,42 @@ $footer-height: 70px;
     }
   }
 }
-.wrapper {
+
+.room-wrapper {
   width: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .footer {
   height: $footer-height;
+}
+
+@media screen and(max-width: 780px) {
+  &.is-chat-open {
+    .footer {
+      background-color: rgba(0, 0, 0, 0.815);
+      .meeting-footer {
+        display: none;
+      }
+    }
+  }
+  .right-panel {
+    .MuiPaper-root {
+      background-color: $right-panel-transparent-background-color;
+      .header {
+        background-color: $right-panel-transparent-background-color-accented;
+      }
+      .messages,
+      .pool-container {
+        background-color: $right-panel-transparent-background-color-accented;
+      }
+    }
+
+    .chat-container,
+    .pools-container {
+      width: 100%;
+    }
+  }
 }

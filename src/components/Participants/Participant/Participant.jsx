@@ -3,7 +3,10 @@ import classNames from "classnames";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import MicIcon from "@material-ui/icons/Mic";
 import AvatarComponent from "../../Shared/Avatar/Avatar";
+import FullscreenIcon from "@material-ui/icons/Fullscreen";
+import PhotoSizeSelectSmallIcon from "@material-ui/icons/PhotoSizeSelectSmall";
 import "./participant.scss";
+import { GRID_THEMES } from "../Participants";
 
 export const Participant = (props) => {
   const {
@@ -12,13 +15,15 @@ export const Participant = (props) => {
     currentParticipant,
     videoRef,
     showAvatar,
-    currentUser,
+    isCurrentUser,
     isCurrentTabOpen,
+    gridTheme,
+    setGridTheme,
   } = props;
 
   const containerClassName = classNames("participant", {
     "is-screen-presenter": isScreenPresenter,
-    "is-current-user": currentUser,
+    "is-current-user": isCurrentUser,
     "is-current-tab-open": isCurrentTabOpen,
     "has-video": currentParticipant.video,
     "no-video": !currentParticipant.video && !currentParticipant.screen,
@@ -29,6 +34,14 @@ export const Participant = (props) => {
   const videoClassName = classNames("video", {
     "screen-presenter-video": isScreenPresenter,
   });
+
+  function changeGridTheme() {
+    if (gridTheme === GRID_THEMES.EQUAL) {
+      setGridTheme(GRID_THEMES.GUEST_FIRST);
+    } else {
+      setGridTheme(GRID_THEMES.EQUAL);
+    }
+  }
 
   if (!currentParticipant) return <></>;
 
@@ -42,12 +55,22 @@ export const Participant = (props) => {
           autoPlay
           playsInline
         ></video>
-        {showAvatar && (
-          <AvatarComponent
-            user={currentParticipant}
-            currentUser={currentUser}
-          />
+        {showAvatar && <AvatarComponent user={currentParticipant} />}
+        {isCurrentUser && (
+          <div className="user-actions">
+            <div
+              className={"meeting-icons change-grid-icon"}
+              onClick={changeGridTheme}
+            >
+              {gridTheme === GRID_THEMES.EQUAL ? (
+                <PhotoSizeSelectSmallIcon />
+              ) : (
+                <FullscreenIcon />
+              )}
+            </div>
+          </div>
         )}
+
         <div className="user-info-container">
           <div className="name">{currentParticipant.name}</div>
           {!currentParticipant.audio ? (

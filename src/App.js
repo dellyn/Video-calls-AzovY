@@ -131,10 +131,11 @@ function App(props) {
           },
         });
       });
-      const { userName: name, preferences = {} } = snap.val();
+      const { userName: name, preferences = {}, photoUrl } = snap.val();
       props.addParticipant({
         [userId]: {
           name,
+          photoUrl,
           id: userId,
           ...preferences,
         },

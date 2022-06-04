@@ -10,6 +10,7 @@ import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
 import CallEndIcon from "@material-ui/icons/CallEnd";
 import classNames from "classnames";
+import { isMobile } from "react-device-detect";
 import "./meetingFooter.scss";
 
 const MeetingFooter = (props) => {
@@ -87,17 +88,19 @@ const MeetingFooter = (props) => {
       >
         {streamState.video ? <VideocamIcon /> : <VideocamOffIcon />}
       </div>
-      <div
-        className={screenIconClassName}
-        data-tip={getScreenIconLabel()}
-        onClick={onScreenClick}
-      >
-        {isSomeoneOtherShareScreen && !streamState.screen ? (
-          <StopScreenShareIcon aria-hidden />
-        ) : (
-          <ScreenShareIcon aria-hidden />
-        )}
-      </div>
+      {!isMobile && (
+        <div
+          className={screenIconClassName}
+          data-tip={getScreenIconLabel()}
+          onClick={onScreenClick}
+        >
+          {isSomeoneOtherShareScreen && !streamState.screen ? (
+            <StopScreenShareIcon aria-hidden />
+          ) : (
+            <ScreenShareIcon aria-hidden />
+          )}
+        </div>
+      )}
       <div className="notification-icon-container">
         <div
           className={`meeting-icons chat ${isChatOpen ? "active" : ""}`}

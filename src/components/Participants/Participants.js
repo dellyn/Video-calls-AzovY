@@ -1,13 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { Participant } from "./Participant/Participant";
 import classNames from "classnames";
 import { checkIsBrokenUser } from "../../App";
 import "./participants.scss";
 
+export const GRID_THEMES = {
+  EQUAL: "EQUAL",
+  GUEST_FIRST: "GUEST_FIRST",
+};
+
 const Participants = (props) => {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
+  const [gridTheme, setGridTheme] = useState(GRID_THEMES.EQUAL);
   let participantKey = Object.keys(props.participants);
   const screenPresenter = participantKey.find((element) => {
     const currentParticipant = props.participants[element];
@@ -22,11 +28,9 @@ const Participants = (props) => {
     {
       "has-screen-presenter": screenPresenter,
       "is-current-user-presenter": screenPresenter && currentUser.screen,
-      "is-chat-open": props.isChatOpen,
-      "default-grid-theme": false,
-      "guest-first-grid-theme": true,
-      "me-first-grid-theme": false,
-      "equal-grid-theme": false,
+      "is-chat-open": props.isRightPanelOpen,
+      "guest-first-grid-theme": gridTheme === GRID_THEMES.GUEST_FIRST,
+      "equal-grid-theme": gridTheme === GRID_THEMES.EQUAL,
     }
   );
 
@@ -100,8 +104,10 @@ const Participants = (props) => {
         isScreenPresenter={currentUser.screen}
         videoRef={videoRef}
         showAvatar={currentUser && !currentUser.video && !currentUser.screen}
-        currentUser={true}
+        isCurrentUser={true}
         isCurrentTabOpen={props.isCurrentTabOpen}
+        gridTheme={gridTheme}
+        setGridTheme={setGridTheme}
       />
     </div>
   );
