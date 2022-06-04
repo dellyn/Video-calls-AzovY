@@ -23,21 +23,15 @@ function getInitials(name, maxSymbols) {
   return initials.toUpperCase();
 }
 
-const AvatarComponent = ({
-  user = {},
-  name,
-  size,
-  currentUser,
-  maxSymbols,
-}) => {
+const AvatarComponent = ({ src, user = {}, size, maxSymbols }) => {
   const containerClassName = classNames("avatar", size);
   return (
     <Avatar
       classes={{ root: containerClassName }}
       style={{ background: stringToColour(user.id) }}
-      src={user.avatar}
+      src={src || user.photoUrl}
     >
-      {currentUser ? "You" : getInitials(user.name, maxSymbols)}
+      {getInitials(user.name, maxSymbols)}
     </Avatar>
   );
 };

@@ -13,7 +13,6 @@ import AvatarComponent from "../Shared/Avatar/Avatar";
 let timeout;
 const chatRef = roomRef.child("chat");
 const Chat = ({ user, open, onClose, participants }) => {
-  console.log(participants);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const userId = Object.keys(user)[0];

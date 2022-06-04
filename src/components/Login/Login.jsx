@@ -17,6 +17,7 @@ const Login = ({
 }) => {
   const [isFetchingUser, setIsFetchingUser] = useState(null);
   const navigate = useHistory();
+
   function handleCrateRoomAndJoin() {
     const id = uuidv4();
     navigate.push(id);

@@ -42,23 +42,33 @@
     text-transform: uppercase;
   }
   .user-info-container {
-    .muted-icon {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(57, 57, 57, 0.5);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    height: 30px;
+    z-index: 9;
+
+    .mic-icon {
       border-radius: 50%;
-      position: absolute;
-      left: 10px;
-      bottom: 10px;
       color: $text-color;
-      background: $btn-color;
-      padding: 6px;
-      width: 28px;
-      height: 28px;
+      background-color: $btn-color;
+      padding: 4px;
+      width: 24px;
+      height: 24px;
+      &.un-muted {
+        background-color: $active-color;
+      }
     }
 
     .name {
+      margin: 0 8px 0 4px;
       color: $text-color;
-      bottom: 13px;
-      position: absolute;
-      left: 50px;
       text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);
     }
   }

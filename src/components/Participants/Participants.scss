@@ -15,111 +15,113 @@ $max-width: 100%;
   .participant {
     flex-grow: 1;
     margin: 2px;
-    max-height: 30vw;
     video {
       transform: scale(-1, 1);
     }
   }
-  &.is-chat-open {
-    width: calc(100% - 400px);
-  }
-
-  &.members-2 {
-    .participant {
-      max-height: 100%;
-      max-width: 100%;
-      width: 100%;
-      height: 100%;
+  &.guest-first-grid-theme {
+    &.is-chat-open {
+      width: calc(100% - 400px);
     }
-    .is-current-user {
-      order: 1;
-      position: absolute;
-      left: auto;
-      width: 300px;
-      height: 200px;
-      right: 16px;
-      bottom: 0;
-    }
-  }
-  &.members-1,
-  &.members-2 {
-    .participant {
-      max-height: 100%;
-      max-width: $max-width;
-      padding: 0;
-    }
-  }
-  &.members-3,
-  &.members-4 {
-    .participant {
-      width: calc(100% / 2 - 24px);
-      height: calc(100% / 2 - 24px);
-      max-width: 800px;
-    }
-  }
-  &.members-5,
-  &.members-6 {
-    .participant {
-      width: calc(100% / 3 - 24px);
-      height: calc(100% / 2 - 24px);
-      max-width: 800px;
-    }
-  }
-  &.members-7,
-  &.members-8 {
-    .participant {
-      width: calc(100% / 4 - 24px);
-      height: calc(100% / 2 - 24px);
-      max-width: 800px;
-    }
-  }
-  //
-  &.has-screen-presenter {
-    justify-content: start;
 
     &.members-2 {
+      .participant {
+        max-height: 100%;
+        max-width: 100%;
+        width: 100%;
+        height: 100%;
+      }
       .is-current-user {
-        position: relative;
+        order: 1;
+        position: absolute;
+        left: auto;
+        width: 300px;
+        height: 200px;
+        right: 16px;
+        bottom: 0;
       }
     }
-    .participant {
-      flex-grow: 0;
-      height: $participant-height-while-sharing;
-      width: calc(100% / (var(--members-count)));
-      max-width: 250px;
-      padding: 0;
+
+    &.members-1,
+    &.members-2 {
+      .participant {
+        max-height: 100%;
+        max-width: $max-width;
+        padding: 0;
+      }
     }
-    &.members-1 {
-      .is-screen-presenter {
-        height: 100%;
-        .layout {
-          display: none;
+    &.members-3,
+    &.members-4 {
+      .participant {
+        width: calc(100% / 2 - 24px);
+        height: calc(100% / 2 - 24px);
+        max-width: 800px;
+      }
+    }
+    &.members-5,
+    &.members-6 {
+      .participant {
+        width: calc(100% / 3 - 24px);
+        height: calc(100% / 2 - 24px);
+        max-width: 800px;
+      }
+    }
+    &.members-7,
+    &.members-8 {
+      .participant {
+        width: calc(100% / 4 - 24px);
+        height: calc(100% / 2 - 24px);
+        max-width: 800px;
+      }
+    }
+    //
+    &.has-screen-presenter {
+      justify-content: start;
+
+      &.members-2 {
+        .is-current-user {
+          position: relative;
         }
       }
-    }
-    .is-screen-presenter {
-      order: 9999;
-      left: 0;
-      height: calc(100% - #{$participant-height-while-sharing} - 8px);
-      width: 100%;
-      max-height: 100%;
-      max-width: 100%;
-      padding: 0;
-      margin: 0 auto;
-
-      video {
-        transform: scale(1, 1);
-        object-fit: contain;
+      .participant {
+        flex-grow: 0;
+        height: $participant-height-while-sharing;
+        width: calc(100% / (var(--members-count)));
+        max-width: 250px;
+        padding: 0;
       }
-      .card {
-        border: 2px solid $active-color;
-        padding: 2px;
-        max-width: $max-width;
-        width: auto;
-        height: 100%;
-        position: relative;
-        width: fit-content;
-        margin: auto;
+      &.members-1 {
+        .is-screen-presenter {
+          height: 100%;
+          .layout {
+            display: none;
+          }
+        }
+      }
+      .is-screen-presenter {
+        order: 9999;
+        left: 0;
+        height: calc(100% - #{$participant-height-while-sharing} - 8px);
+        width: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0 auto;
+
+        video {
+          transform: scale(1, 1);
+          object-fit: contain;
+        }
+        .card {
+          border: 2px solid $active-color;
+          padding: 2px;
+          max-width: $max-width;
+          width: auto;
+          height: 100%;
+          position: relative;
+          width: fit-content;
+          margin: auto;
+        }
       }
     }
   }

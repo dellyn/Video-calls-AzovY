@@ -23,6 +23,10 @@ const Participants = (props) => {
       "has-screen-presenter": screenPresenter,
       "is-current-user-presenter": screenPresenter && currentUser.screen,
       "is-chat-open": props.isChatOpen,
+      "default-grid-theme": false,
+      "guest-first-grid-theme": true,
+      "me-first-grid-theme": false,
+      "equal-grid-theme": false,
     }
   );
 
@@ -36,7 +40,6 @@ const Participants = (props) => {
   const filteredParticipantKeys = participantKey.filter((id) => {
     return !checkIsBrokenUser(props.participants[id]);
   });
-  console.log(filteredParticipantKeys);
   const renderParticipants = filteredParticipantKeys.map((id, index) => {
     const currentParticipant = { ...props.participants[id], id };
     const isCurrentUser = currentParticipant.currentUser;
@@ -54,7 +57,10 @@ const Participants = (props) => {
         const videElement = document.getElementById(
           `participantVideo${curentIndex}`
         );
-        if (videElement) videElement.srcObject = remoteStream;
+        if (videElement) {
+          videElement.srcObject = remoteStream;
+          videElement.muted = currentParticipant.audio;
+        }
       };
     }
 
@@ -76,6 +82,7 @@ const Participants = (props) => {
     );
   });
 
+  console.log("currentUser", currentUser);
   return (
     <div
       style={{

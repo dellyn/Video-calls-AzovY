@@ -54,7 +54,6 @@ function App(props) {
   const [firebaseUser, setFirebaseUser] = useState({});
   const isUserSet = !!props.user;
   const isStreamSet = !!props.stream;
-  const [userName, setUserName] = useState(null);
   const [userWasFetched, setUserWasFetched] = useState(false);
   const [roomWasCheked, setRoomWasCheked] = useState(false);
   const [isRoomExist, setIsRoomExist] = useState(false);
@@ -78,7 +77,6 @@ function App(props) {
 
     return localStream;
   };
-
   async function initialConnection() {
     const stream = await getUserStream();
     stream.getVideoTracks()[0].enabled = false;
@@ -94,62 +92,59 @@ function App(props) {
         const userId = firebaseUser.uid;
         const userRef = participantRef.child(userId);
         userRef.set({
-          userName,
+          userName: firebaseUser.displayName,
           id: userId,
+          photoUrl: firebaseUser.photoURL,
           preferences: defaultPreference,
         });
         props.setUser({
-          [userRef.key]: { name: userName, id: userId, ...defaultPreference },
+          [userId]: {
+            name: firebaseUser.displayName,
+            photoUrl: firebaseUser.photoURL,
+            id: userId,
+            ...defaultPreference,
+          },
         });
+
         userRef.onDisconnect().remove();
       }
     });
   }
 
-  useEffect(() => {
+  function listenAuthChanges() {
     db.auth().onAuthStateChanged((user = {}) => {
       setUserWasFetched(true);
       setFirebaseUser(user || {});
     });
-  }, []);
+  }
 
-  useEffect(() => {
-    if (!isEmpty(firebaseUser) && isRoomExist && wantsToJoin) {
-      initialConnection();
-    } else {
-      if (!userName) {
-        setUserName(firebaseUser.displayName);
-      }
-    }
-  }, [firebaseUser, isRoomExist && wantsToJoin]);
-
-  useEffect(() => {
-    if (isStreamSet && isUserSet && isRoomExist && wantsToJoin) {
-      participantRef.on("child_added", (snap) => {
-        const preferenceUpdateEvent = participantRef
-          .child(snap.key)
-          .child("preferences");
-        preferenceUpdateEvent.on("child_changed", (preferenceSnap) => {
-          props.updateParticipant({
-            [snap.key]: {
-              [preferenceSnap.key]: preferenceSnap.val(),
-            },
-          });
-        });
-        const { userName: name, preferences = {} } = snap.val();
-        props.addParticipant({
-          [snap.key]: {
-            name,
-            id: snap.key,
-            ...preferences,
+  function subscribeOnParticipantsUpdates() {
+    participantRef.on("child_added", (snap) => {
+      const userId = snap.val().id;
+      const preferenceUpdateEvent = participantRef
+        .child(userId)
+        .child("preferences");
+      preferenceUpdateEvent.on("child_changed", (preferenceSnap) => {
+        props.updateParticipant({
+          [userId]: {
+            [preferenceSnap.key]: preferenceSnap.val(),
           },
         });
       });
-      participantRef.on("child_removed", (snap) => {
-        props.removeParticipant(snap.key);
+      const { userName: name, preferences = {} } = snap.val();
+      props.addParticipant({
+        [userId]: {
+          name,
+          id: userId,
+          ...preferences,
+        },
       });
-    }
-  }, [isStreamSet, isUserSet, isRoomExist, wantsToJoin]);
+    });
+    participantRef.on("child_removed", (snap) => {
+      const userId = snap.val().id;
+      props.removeParticipant(userId);
+    });
+  }
 
   function checkRoomIsExist(id) {
     setRoomWasCheked(false);
@@ -159,6 +154,22 @@ function App(props) {
       setRoomWasCheked(true);
     });
   }
+
+  useEffect(() => {
+    listenAuthChanges();
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(firebaseUser) && isRoomExist && wantsToJoin) {
+      initialConnection();
+    }
+  }, [firebaseUser, isRoomExist, wantsToJoin]);
+
+  useEffect(() => {
+    if (isStreamSet && isUserSet && isRoomExist && wantsToJoin) {
+      subscribeOnParticipantsUpdates();
+    }
+  }, [isStreamSet, isUserSet, isRoomExist, wantsToJoin]);
 
   useEffect(() => {
     if (roomId) {

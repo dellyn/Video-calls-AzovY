@@ -8,6 +8,7 @@ import Pools from "../Pools/Pools";
 import useNotification from "../../hooks/useNotification";
 import { checkIsBrokenUser } from "../../App";
 import "./mainScreen.scss";
+import Loading from "../Loading/Loading";
 
 const MainScreen = (props) => {
   const arr = Object.entries(props.participants);
@@ -21,6 +22,19 @@ const MainScreen = (props) => {
     video: false,
     screen: false,
   });
+  console.log("streamState", streamState);
+
+  useEffect(() => {
+    if (props.stream && props.stream.getAudioTracks()[0]) {
+      props.stream.getAudioTracks()[0].enabled = false;
+      setStreamState({
+        ...streamState,
+        mic: !!props.stream.getAudioTracks()[0].enabled,
+        video: !!props.stream.getVideoTracks()[0].enabled,
+      });
+    }
+  }, [props.stream]);
+
   const isSomeoneOtherShareScreen = Object.values(participantRef.current).some(
     (user) => user.screen && user.id !== props.currentUser.id
   );
@@ -142,6 +156,7 @@ const MainScreen = (props) => {
   return (
     <div className="wrapper">
       <div className="main-screen">
+        <Loading isLoading={!props.stream} />
         <Participants
           streamState={streamState}
           isChatOpen={isChatOpen || isPoolsOpen}

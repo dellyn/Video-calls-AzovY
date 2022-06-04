@@ -21,6 +21,9 @@
   justify-content: center;
   cursor: pointer;
   position: relative;
+  &.call-end {
+    background-color: $inactive-color;
+  }
   &.screen,
   &.chat,
   &.pools {

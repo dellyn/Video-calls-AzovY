@@ -4,12 +4,13 @@ $footer-height: 70px;
 .main-screen {
   width: 100%;
   height: calc(100vh - #{$footer-height});
-
   background: #3c4043;
   display: flex;
   align-items: center;
+  position: relative;
+
   .participants {
-    height: calc(100vh - #{$footer-height});
+    height: 100%;
     .participant.no-video {
       order: 999;
     }
@@ -37,6 +38,7 @@ $footer-height: 70px;
 }
 .wrapper {
   width: 100%;
+  position: relative;
 }
 
 .footer {

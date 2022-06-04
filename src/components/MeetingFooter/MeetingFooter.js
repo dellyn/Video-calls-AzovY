@@ -8,6 +8,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
+import CallEndIcon from "@material-ui/icons/CallEnd";
 import classNames from "classnames";
 import "./meetingFooter.scss";
 
@@ -63,8 +64,15 @@ const MeetingFooter = (props) => {
     props.onVideoClick(streamState.video);
   }, [streamState.video]);
 
+  const onCallEndClick = () => {
+    props.onScreenClick(streamState.screen);
+  };
+
   return (
     <div className="meeting-footer">
+      <div className={`meeting-icons call-end`} onClick={onCallEndClick}>
+        <CallEndIcon aria-hidden />
+      </div>
       <div
         className={"meeting-icons mic " + (streamState.mic ? "active" : "")}
         data-tip={streamState.mic ? "Mute Audio" : "Unmute Audio"}

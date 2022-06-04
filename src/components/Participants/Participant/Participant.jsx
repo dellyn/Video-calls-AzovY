@@ -1,66 +1,10 @@
 import React from "react";
 import classNames from "classnames";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import MicIcon from "@material-ui/icons/Mic";
 import AvatarComponent from "../../Shared/Avatar/Avatar";
 import "./participant.scss";
 
-function getGridStyle(participantKey, width) {
-  let maxWidth = 800;
-  if (participantKey.length <= 2) {
-    return {
-      participantsInRow: 1,
-      widthPadding: 16,
-      participantsRows: 1,
-      heightPadding: 0,
-      maxWidth: null,
-    };
-  }
-  if (participantKey.length <= 4) {
-    return {
-      participantsInRow: 2,
-      widthPadding: 32,
-      participantsRows: 2,
-      heightPadding: 16,
-      maxWidth,
-    };
-  }
-  if (participantKey.length === 5) {
-    return {
-      participantsInRow: 3,
-      widthPadding: 32,
-      participantsRows: 2,
-      heightPadding: 16,
-      maxWidth,
-    };
-  }
-  if (participantKey.length === 6) {
-    return {
-      participantsInRow: 3,
-      widthPadding: 32,
-      participantsRows: 2,
-      heightPadding: 16,
-      maxWidth,
-    };
-  }
-  if (participantKey.length <= 8) {
-    return {
-      participantsInRow: 4,
-      widthPadding: 32,
-      participantsRows: 2,
-      heightPadding: 16,
-      maxWidth,
-    };
-  }
-  if (participantKey.length === 9) {
-    return {
-      participantsInRow: 3,
-      widthPadding: 32,
-      participantsRows: 3,
-      heightPadding: 16,
-    };
-  }
-  return {};
-}
 export const Participant = (props) => {
   const {
     isScreenPresenter,
@@ -82,6 +26,10 @@ export const Participant = (props) => {
     "has-audio": currentParticipant.audio,
   });
 
+  const videoClassName = classNames("video", {
+    "screen-presenter-video": isScreenPresenter,
+  });
+
   if (!currentParticipant) return <></>;
 
   return (
@@ -89,9 +37,7 @@ export const Participant = (props) => {
       <div className="card">
         <video
           ref={videoRef}
-          className={`video ${
-            isScreenPresenter ? "screen-presenter-video" : ""
-          }`}
+          className={videoClassName}
           id={`participantVideo${curentIndex}`}
           autoPlay
           playsInline
@@ -103,12 +49,12 @@ export const Participant = (props) => {
           />
         )}
         <div className="user-info-container">
-          {!currentParticipant.audio && (
-            <MicOffIcon className="muted-icon" aria-hidden />
+          <div className="name">{currentParticipant.name}</div>
+          {!currentParticipant.audio ? (
+            <MicOffIcon className="mic-icon muted" aria-hidden />
+          ) : (
+            <MicIcon className="mic-icon un-muted" aria-hidden />
           )}
-          <div className="name">
-            {currentUser ? "You" : currentParticipant.name}
-          </div>
         </div>
         <div className="layout"></div>
       </div>
